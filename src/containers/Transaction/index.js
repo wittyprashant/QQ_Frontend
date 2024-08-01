@@ -46,6 +46,34 @@ import leftarrow from './../../assets/Images/leftarrow.png';
  import edit  from './../../assets/Images/whiteedit.png';
 import Header from '../../components/partials/Header';
 
+const ModalP = ({ visible, setVisible }) => (
+  <>
+    <CButton color="primary" onClick={() => setVisible(!visible)}>
+      Vertically centered scrollable modal
+    </CButton>
+    <CModal
+      alignment="center"
+      scrollable
+      visible={visible}
+      onClose={() => setVisible(false)}
+      aria-labelledby="VerticallyCenteredScrollableExample2"
+    >
+      <CModalHeader>
+        <CModalTitle id="VerticallyCenteredScrollableExample2">Modal title</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        {/* Modal content here */}
+      </CModalBody>
+      <CModalFooter>
+        <CButton color="secondary" onClick={() => setVisible(false)}>
+          Close
+        </CButton>
+        <CButton color="primary">Save changes</CButton>
+      </CModalFooter>
+    </CModal>
+  </>
+);
+
 const dropdownContent = (
     <div className='custom-dropdown-content'>
          <CRow>
@@ -172,6 +200,7 @@ class Transaction extends Component {
             },
             {
                 name: 'Invoice',
+                // className="",
                 selector: row => {
                     if (row.IsReconciled) {
                         return <CIcon icon={cilCheckAlt} style={{ color: 'green', fontSize: '20px' }} />;
@@ -781,8 +810,9 @@ class Transaction extends Component {
         <CButton color="#000F24" className='btnedit' onClick={ModalP}>
            
            Edit
+           <CIcon icon={cilPencil} />
          </CButton>
-         <CIcon icon={cilPencil} />
+        
         </CTableDataCell>
         <CTableDataCell>
           <CIcon icon={cilInfo} />
@@ -906,57 +936,11 @@ class Transaction extends Component {
         );
     }
 }
-const ModalP = () => {
-    const [visible, setVisible] = useState(false);
-  
-    return (
-      <>
-        <CButton color="primary" onClick={() => setVisible(!visible)}>
-          Vertically centered scrollable modal
-        </CButton>
-        <CModal
-          alignment="center"
-          scrollable
-          visible={visible}
-          onClose={() => setVisible(false)}
-          aria-labelledby="VerticallyCenteredScrollableExample2"
-        >
-          <CModalHeader>
-            <CModalTitle id="VerticallyCenteredScrollableExample2">Modal title</CModalTitle>
-          </CModalHeader>
-          <CModalBody>
-            <p>
-              Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-              in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-            </p>
-            <p>
-              Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus
-              vel augue laoreet rutrum faucibus dolor auctor.
-            </p>
-            <p>
-              Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-              scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-              auctor fringilla.
-            </p>
-            <p>
-              Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis
-              in, egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-            </p>
-            <p>
-              Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus
-              vel augue laoreet rutrum faucibus dolor auctor.
-            </p>
-          </CModalBody>
-          <CModalFooter>
-            <CButton color="secondary" onClick={() => setVisible(false)}>
-              Close
-            </CButton>
-            <CButton color="primary">Save changes</CButton>
-          </CModalFooter>
-        </CModal>
-      </>
-    );
-  }
+const ModalPWrapper = () => {
+  const [visible, setVisible] = useState(false);
+
+  return <ModalP visible={visible} setVisible={setVisible} />;
+};
   
 const mapStateToProps = state => {
     return {
