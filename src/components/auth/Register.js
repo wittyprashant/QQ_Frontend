@@ -90,7 +90,7 @@ class Register extends Component {
             )
         }
 
-        let LoginButton = !this.props.loading ? "Sign Up" : "Please Wait ..." 
+        let RegisterButton = !this.props.loading ? "Sign Up" : "Please Wait ..." 
         return (
             <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
                 <div class="lgnauth">
@@ -178,25 +178,24 @@ class Register extends Component {
               
                                                 <CFormFeedback invalid>Please enter confirm password.</CFormFeedback>
                                             </CInputGroup>
+
                                             <CRow>
-                                               <CCol>
-                                               <Checkbox aria-label='Terms & Conditions' />
-                                               <label>Terms & Conditions</label>
-                                               </CCol>
-                                               
-                                           
+                                                <CCol>
+                                                    <Checkbox id="terms-checkbox" aria-label='Terms & Conditions' />
+                                                    <label htmlFor="terms-checkbox" style={{ cursor: 'pointer' }}>
+                                                    Terms & Conditions
+                                                    </label>
+                                                </CCol>
                                             </CRow>
                                             <CRow>
-                                              
-                                                    <CButton color="primary" className="px-4 btnsign" type="submit">
-                                                        {LoginButton}
-                                                    </CButton>
-                                               
+                                                <CButton color="primary" className="px-4 btnsign" type="submit">
+                                                    {RegisterButton}
+                                                </CButton>
                                             </CRow>
                                             <CRow>
                                                 <CCol class="accnt-txt">
-                                                    <label>Have an account?</label>
-                                                    <a href='/login'><label class="logn-txt">Login</label></a>
+                                                    <label>Have an account? </label>
+                                                    <a href='/login' style={{ cursor: 'pointer' }}><label class="logn-txt"> Sign In </label></a>
                                                 </CCol>
                                             </CRow>
                                         </CForm>

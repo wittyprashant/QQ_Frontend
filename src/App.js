@@ -35,7 +35,7 @@ class App extends Component {
         <AxiosInterceptor>
           <Routes>
             <Route exact path="/login" name="Login Page" element={
-              <AuthenticatedRoute redirectTo="/members">
+              <AuthenticatedRoute redirectTo="/dashboard">
                 <Login />
               </AuthenticatedRoute>
             } />
