@@ -270,7 +270,7 @@ class Login extends Component {
             );
         }
 
-        let LoginButton = !this.props.loading ? 'Sign In' : 'Please Wait ...';
+        let LoginButton = !this.props.loading ? 'Sign In' : 'Please Wait...';
         const eyeIcon = this.state.passwordVisible ? openEyeIcon : closedEyeIcon;
 
         return (
