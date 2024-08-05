@@ -8,7 +8,7 @@ export const authStart = () => ({
 });
 
 export const authFail = (error) => {
-    console.error('Auth Fail:', error); // Debug information
+    console.error('Auth Fail:', error);
     return {
         type: actions.AUTH_FAIL,
         error: error,
@@ -16,12 +16,9 @@ export const authFail = (error) => {
 };
 
 export const authSuccess = (data) => {
-    ; // Debug information
-    // console.log("d",data);
     return {
         type: actions.AUTH_SUCCESS,
         data: data
-        // Include user ID in the action
     };
 };
 
@@ -43,12 +40,9 @@ export const checkAuthTimeout = (expiresIn) => {
 export const userLogin = (email,password) => {
     return dispatch => {        
         dispatch(authStart());
-        // axios.post('Authentication/login', {username : email,password : password})
         axios.post(endPoint.login, {email : email,password : password})
         .then((response) => {
-            // console.log("--",response.status)
-            if(response.status == 200){
-                // console.log(JSON.stringify(response.data.data));
+            if(response.status === 200){
                 localStorage.setItem("userDetail", JSON.stringify(response.data.data))
                 dispatch(authSuccess(response.data.data));
             } else {
@@ -59,6 +53,27 @@ export const userLogin = (email,password) => {
         .catch((error) => {
             dispatch(authFail(error.message))
         })
+    }
+}
+
+export const userRegister = (role_id, first_name, last_name, email, password, confirm_password, status, is_deleted) => {
+    return dispatch => {
+        dispatch(authStart());
+        return axios.post(endPoint.register, {role_id, first_name, last_name, email, password, confirm_password, status, is_deleted})
+        .then((response) => {
+            if (response.status === 200 && response.data.success) {
+                localStorage.setItem("userDetail", JSON.stringify(response.data.data));
+                dispatch(authSuccess(response.data.message));
+                return response;
+            } else {
+                dispatch(authFail(response.data.message));
+                return response;
+            }
+        })
+        .catch((error) => {
+            dispatch(authFail(error.message));
+            throw error;
+        });
     }
 }
 
