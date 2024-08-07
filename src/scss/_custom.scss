@@ -1015,13 +1015,14 @@ svg.icon.iconchck {
 }
 table.transcationtble {
     width: 100%;
+
 }
 .trasaction_data_table {
-    /* padding-inline: 20px; */
-    border-left: 3px solid;
-    border-left-color: #00C0F3;
+     padding-right: 40px; 
+    // border-left: 3px solid;
+    // border-left-color: #00C0F3;
     padding-bottom: 0;
-    margin-inline: 20px;
+    margin-left: 20px;
   
 }
 .trasaction_data_table .sc-hLseeU.sc-eDDNvR.sc-irTswW.dqfNny.gSVZoG.IHqlj.rdt_TableCol {
@@ -1029,6 +1030,8 @@ table.transcationtble {
     padding-right: 15px;
     height: 20px;
     margin-top: 13px;
+    text-align: center;
+    justify-content: center;
 }
 .trasaction_data_table div#cell-1-undefined {
     border-right: 1px solid #ccc;
@@ -1047,24 +1050,126 @@ table.transcationtble {
     padding-right: 15px;
     height: 20px;
     margin-top: 13px;
+    justify-content: center;
 }
 .trasaction_data_table div#cell-4-undefined {
     border-right: 1px solid #ccc;
     padding-right: 15px;
     height: 20px;
     margin-top: 13px;
+    justify-content: center;
 }
 .trasaction_data_table div#cell-5-undefined {
     border-right: 1px solid #ccc;
     padding-right: 15px;
     height: 20px;
     margin-top: 13px;
+    justify-content: center;
 }
 .trasaction_data_table div#cell-6-undefined {
     border-right: 1px solid #ccc;
     padding-right: 15px;
     height: 20px;
     margin-top: 13px;
+    justify-content: center;
+}
+.trasaction_data_table div#cell-7-undefined {
+
+    justify-content: center;
+}
+.trasaction_data_table div#row-0 {
+    background-color: white;
+  
+}
+.trasaction_data_table div#row-2 {
+    background-color: white;
+   
+}
+.trasaction_data_table div#row-4 {
+    background-color: white;
+ 
+}
+.trasaction_data_table div#row-6 {
+    background-color: white;
+  
+}
+.trasaction_data_table div#row-8 {
+    background-color: white;
+}
+.trasaction_data_table .sc-dmqHEX.jWpMhA.rdt_TableHeadRow {
+    background-color: transparent;
+}
+.trasaction_data_table .itmdas {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.sc-dnwKUv.hXLGuA.trasaction_data_table {
+    padding-bottom: 20px;
+}
+.trasaction_data_table .rdt_TableBody .rdt_TableRow {
+    border-left: 3px solid #00C0F3 !important;
+    border-radius: 5px;
+    border: none;
+}
+.trasaction_data_table .sc-dmqHEX.jWpMhA.rdt_TableHeadRow {
+    background-color: transparent;
+    border-bottom: unset;
+}
+.trasaction_data_table .sc-beqWaB.ewhdCu.rdt_Table {
+    background-color: transparent;
+}
+.modal.fade.show.tablemodalbox {
+    margin-top: 10%;
+}
+.partext {
+    display: flex;
+    flex-direction: row;
+}
+.drpbtn {
+    background-color: transparent;
+    border-color: unset;
+    color: black;
+    border: unset;
+}
+p.txtp {
+    margin-top: 7px;
+}
+ul.dropdown-menu.menudrop {
+    position: absolute;
+    display: block;
+    margin-top: 40px;
+}
+.input-group.inptgrp {
+    width: 45%;
+}
+.dtepckr {
+    position: absolute;
+    z-index: 1;
+    top: 40%;
+}
+svg.edticon {
+    margin-left: 10px;
+}
+.btnEdit {
+    font-size: 13px;
+    margin-left: 15px;
+}
+p.typtx {
+    margin-top: 10px;
+    font-weight: 600;
+}
+.modal.fade.show.tablemodalboxfilter {
+    margin-top: 5%;
+}
+.react-datepicker-wrapper {
+    width: 100%;
+}
+input.date-picker-input {
+    width: 100%;
+    border-radius: 5px;
+    height: 40px;
+    padding-left: 15px;
 }
 // .trasaction_data_table .sc-dmqHEX.jWpMhA.rdt_TableHeadRow {
 //     display: none;

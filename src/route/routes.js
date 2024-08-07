@@ -23,7 +23,7 @@ const GroupActivityAddEdit = React.lazy(() => import('../containers/GroupActivit
 
 const DigitalLibrary = React.lazy(() => import('../containers/DigitalLibrary'))
 const DigitalLibraryAddEdit = React.lazy(() => import('../containers/DigitalLibrary/addEdit'))
-const Dashboard = React.lazy(() => import('../components/payment dashboard/btndashboard'));
+const paymentdashboard = React.lazy(() => import('../containers/paymentdashboard/btndashboard'));
 const Transaction = React.lazy(() => import('../containers/Transaction'))
 const TransactionDetail = React.lazy(() => import('../containers/Transaction/detail'))
 const TransactionAddEdit = React.lazy(() => import('../containers/Transaction/addEdit'))
@@ -67,7 +67,7 @@ const routes = [
   { path: '/digital_library', name: 'Digital Library', element: DigitalLibrary, exact: true },
   { path: '/digital_library/add', name: 'Add Digital Library', element: DigitalLibraryAddEdit, exact: true },
   { path: '/digital_library/edit/:digitalId', name: 'Edit Digital Library', element: DigitalLibraryAddEdit },
-  { path: '/dashboard',name:'Dashboards',element:Dashboard,exact:true},
+  { path: '/dashboard',name:'Dashboards',element:paymentdashboard,exact:true},
   
   { path: '/transactions', name: 'Transactions', element: Transaction, exact: true },
   { path: '/transactions/add', name: 'Add Transaction', element: TransactionAddEdit, exact: true },

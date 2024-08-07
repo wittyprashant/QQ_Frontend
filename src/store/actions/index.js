@@ -113,3 +113,9 @@ export {
 	UpdateDataNull,
 	userRequestListFilter
 } from "./userRequest"
+
+export{
+	dashboardList,
+	getdashboardDetail,
+
+} from "./dashboard"

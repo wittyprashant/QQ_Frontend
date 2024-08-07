@@ -1,6 +1,6 @@
 import * as actions from "./actionTypes";
 import axios from '../../axios_call'
-import { endPoint } from "../../components/frontend_api/API/constant_api";
+
 
 
 const transactionListStart = () => {
@@ -69,28 +69,39 @@ const transactionfilterList = (text) => {
         text : text
     }
 }
-
-export const transactionList = (param) => {
-    return dispatch => {        
-        dispatch(transactionListStart());
-        axios.get('http://localhost:8080/api/v1/transaction')
+const constructUrlWithParams = (baseUrl, params) => {
+    const query = Object.keys(params)
+      .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+      .join('&');
+    return `${baseUrl}?${query}`;
+  };
+  
+  export const transactionList = (params) => {
+    return (dispatch) => {
+      dispatch(transactionListStart());
+  
+      const baseUrl = 'http://localhost:8080/api/v1/transaction';
+      const url = constructUrlWithParams(baseUrl, params);
+  
+      axios.get(url)
         .then((response) => {
-            if(response.status === 200){
-             
-                const data = response.data.data
-                const msg = response.data.message
-                
-                dispatch(transactionListSuccess(msg,data,param.page));
-            }else{
-                dispatch(transactionListFail(response.message))
-            }            
+          if (response.status === 200) {
+            const data = response.data.data;
+            const msg = response.data.message;
+            dispatch(transactionListSuccess(msg, data, params.page));
+          } else {
+            dispatch(transactionListFail(response.message));
+          }
         })
         .catch((error) => {
-            dispatch(transactionListFail(error.message))
-        })
-        dispatch(transactionListSuccess('Data Successfully.',[{},{},{}],1));
-    }
-}
+          dispatch(transactionListFail(error.message));
+        });
+  
+      // Mock success for local testing (remove this in production)
+      dispatch(transactionListSuccess('Data Successfully.', [{}, {}, {}], 1));
+    };
+  };
+
 
 export const transactionDelete = (id,token) => {
     return dispatch => {        

@@ -2,10 +2,10 @@
 import { CContainer, CRow } from '@coreui/react';
 import React, { useState } from 'react';
 import Summary from './summarybtn/summarycard';
-import { Color } from '../constant/color';
+import { Color } from '../../components/constant/color';
+import Header from '../../components/partials/Header';
 import Payable from './payablebtn/payable';
 import Recievables from './recieveablebtn/recievedashboard';
-import Header from '../partials/Header';
 
 
 

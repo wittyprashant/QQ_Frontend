@@ -5,6 +5,7 @@ export const endPoint = {
   postMethod: "Post",
   getMethod: "Get",
   register:"user/register",
-  Transaction:"transaction"
+  Transaction:"transaction",
+  Invoice:"invoice"
  
 };
