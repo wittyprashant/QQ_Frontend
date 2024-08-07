@@ -139,7 +139,7 @@ class Register extends Component {
                                         <CFormInput
                                             id="first_name"
                                             type="text"
-                                            placeholder="First Name"
+                                            placeholder="Enter first name"
                                             value={this.state.first_name}
                                             onChange={this.handleChange}
                                             required
@@ -154,7 +154,7 @@ class Register extends Component {
                                         <CFormInput
                                             id="last_name"
                                             type="text"
-                                            placeholder="Last Name"
+                                            placeholder="Enter last name"
                                             value={this.state.last_name}
                                             onChange={this.handleChange}
                                             required
@@ -169,7 +169,7 @@ class Register extends Component {
                                         <CFormInput
                                             id="email"
                                             type="text"
-                                            placeholder="Email"
+                                            placeholder="Enter email"
                                             value={this.state.email}
                                             onChange={this.handleChange}
                                             required
@@ -184,7 +184,7 @@ class Register extends Component {
                                         <CFormInput
                                             id="password"
                                             type={this.state.passwordVisible ? 'text' : 'password'}
-                                            placeholder="Password"
+                                            placeholder="Enter password"
                                             value={this.state.password}
                                             onChange={this.handleChange}
                                             required
@@ -206,9 +206,8 @@ class Register extends Component {
                                         <CFormInput
                                             id="confirm_password"
                                             type={this.state.confirmPasswordVisible ? 'text' : 'password'}
-                                            placeholder="Confirm Password"
-                                            value={'123456lL'}
-                                            // value={this.state.confirm_password}
+                                            placeholder="Enter confirm password"
+                                            value={this.state.confirm_password}
                                             onChange={this.handleChange}
                                             required
                                             style={inputStyle}
@@ -222,7 +221,6 @@ class Register extends Component {
                                         </CInputGroupText>
                                         <CFormFeedback invalid>Please enter confirm password.</CFormFeedback>
                                     </CInputGroup>
-
                                     <CRow>
                                         <CCol>
                                             <Checkbox id="terms-checkbox" aria-label='Terms & Conditions' />

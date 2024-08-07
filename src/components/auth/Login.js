@@ -342,7 +342,7 @@ class Login extends Component {
                                         <CCol className="accnt-txt">
                                             <label>Don't have an account? </label>
                                             <a href="/register">
-                                                <label className="logn-txt"> Sign In </label>
+                                                <label className="logn-txt"> Sign Up </label>
                                             </a>
                                         </CCol>
                                     </CRow>
