@@ -50,6 +50,34 @@ import { FaCalendarAlt, FaEdit, FaRegQuestionCircle } from 'react-icons/fa';
 
 
 
+const ModalP = ({ visible, setVisible }) => (
+  <>
+    <CButton color="primary" onClick={() => setVisible(!visible)}>
+      Vertically centered scrollable modal
+    </CButton>
+    <CModal
+      alignment="center"
+      scrollable
+      visible={visible}
+      onClose={() => setVisible(false)}
+      aria-labelledby="VerticallyCenteredScrollableExample2"
+    >
+      <CModalHeader>
+        <CModalTitle id="VerticallyCenteredScrollableExample2">Modal title</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        {/* Modal content here */}
+      </CModalBody>
+      <CModalFooter>
+        <CButton color="secondary" onClick={() => setVisible(false)}>
+          Close
+        </CButton>
+        <CButton color="primary">Save changes</CButton>
+      </CModalFooter>
+    </CModal>
+  </>
+);
+
 const dropdownContent = (
     <div className='custom-dropdown-content'>
          <CRow>
@@ -867,7 +895,6 @@ class Transaction extends Component {
         );
     }
 }
-
   
 const mapStateToProps = state => {
     return {
