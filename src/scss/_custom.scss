@@ -1075,3 +1075,21 @@ table.transcationtble {
     max-width: 400px; /* Adjust as per your requirement */
     margin: 0 auto;
   }
+
+.bill-section .offcanvas.offcanvas-start.show { width: 50%; }
+
+.sidebar-fixed .sidebar-brand.QQ-log { padding: 20px 0px; }
+
+.bill-section .offcanvas.offcanvas-start { top: 73px; }
+
+.icon-button-wrapper {
+    display: flex;
+    align-items: center; /* Vertically center-align the items */
+  }
+  
+  .icon-button-wrapper .btn-icon-right {
+    font-size: 20px; /* Adjust the size as needed */
+    font-weight: bold; /* Adjust the weight as needed */
+    margin-right: 8px; /* Adjust the spacing as needed */
+  }
+  
