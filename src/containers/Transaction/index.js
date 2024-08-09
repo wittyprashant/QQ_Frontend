@@ -31,6 +31,7 @@ import * as actions from '../../store/actions'
 import { NavLink } from 'react-router-dom';
 import "react-datepicker/dist/react-datepicker.css";
 import { updateObject } from '../../store/Utility'
+
 import { cilEyedropper, cilArrowRight, cilCheckAlt, cilXCircle, cilX,cilPencil,cilCheckCircle,cilInfo, cilSend } from '@coreui/icons';
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faAngleRight, faCheck } from '@fortawesome/free-solid-svg-icons';
@@ -170,7 +171,7 @@ class Transaction extends Component {
         },
         {
           name: 'Amount',
-          selector: row => '-$' + `${row.Total}`,
+          selector: row => '$' + `${row.Total}`,
           sortable: true,
         },
         {
@@ -302,6 +303,13 @@ class Transaction extends Component {
       handleChanged = (event) => {
         this.setState({ newMessage: event.target.value });
       };
+
+  handleDateChange = (date) => {
+    this.setState({ startDate: date });
+  };
+  handleDateChangeend = (date) => {
+    this.setState({ endDate: date });
+  };
     toggleCardVisibility = ( cardWidth,columnsVisible) => {
     
      
@@ -537,18 +545,7 @@ class Transaction extends Component {
             </CFormSelect>
                 </div>
                 
-                <div>
-                <p class="typtx">Type:</p>
-                  <CFormSelect onChange={this.handleSelectChangeType} value={selectedType}>
-              <option value="">Select a Transaction Type</option>
-              {transactionType.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </CFormSelect>
-          
-                </div>
+                
                 <div>
                 <p class="typtx">Start_date:</p>
                   <div className="date-picker-wrapper">
