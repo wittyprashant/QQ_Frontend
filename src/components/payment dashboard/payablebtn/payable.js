@@ -1,78 +1,129 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
-import { CCard,CCardBody, CCol,CTable,CTableRow,CTableHead,CTableDataCell,CTableHeaderCell,CTableBody} from "@coreui/react";
-import { Icon } from "@mui/material";
-import DropdownMenu from "react-bootstrap/esm/DropdownMenu";
+import { CCard, CCardBody, CCol, CTable, CTableRow,CInputGroup,CFormSelect,CButton,CFormInput, CTableHead, CTableDataCell, CTableHeaderCell, CTableBody,CDropdown,CDropdownToggle,CDropdownMenu,CDropdownItem } from "@coreui/react";
 import { Dropdown } from "react-bootstrap";
-import { MenuItem } from "@mui/base";
-const tableData = [
-  
-    {
-       category: "Invoice Date",
-       values: ["Due Date","Planned Date","Invoice Reference","Amount","Payment Method","Amount To Pay"]
-     },
-    {
-       category: "Supplier Name",
-       values: [""]
-     },
-     {
-       category: "2 Nov 2022",
-       values: ["2 Dec 2022", "14 Dec 2022", "SI1471880", "$883.30"]
-     },
-     {
-      category: "2 Nov 2022",
-      values: ["2 Dec 2022", "14 Dec 2022", "SI1471880", "$883.30"]
-     },
-     {
-      category: "2 Nov 2022",
-      values: ["2 Dec 2022", "14 Dec 2022", "SI1471880", "$883.30"],
-      //date:[   <CDatePicker label="Date Picker" locale="en-US" />]
-     },
-     {
-      category: "2 Nov 2022",
-      values: ["2 Dec 2022", "14 Dec 2022", "SI1471880", "$883.30"]
-     },
-     {
-      category: "2 Nov 2022",
-       values: ["-$20,000", "-", "-", "-", "-"]
-     },
-     {
-      Header: "",
-      accessor: "actionColumn",
-      disableSortBy: true,
-      Cell: ({ original }) => (
+import CIcon from "@coreui/icons-react";
+import { cilCalendar } from "@coreui/icons";
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import { Icon, MenuItem, Select } from "@mui/material";
+import { FaEdit, FaRegCalendar } from "react-icons/fa";
+import moment from 'moment';
+import axios from 'axios';
 
-          <div className="cursor__pointer ">
-            <Dropdown
-                onSelect={(eventKey) => {
-                }}
-            >
-              <Dropdown.Toggle btnStyle="link" noCaret
-              >
-                <Icon className="padding5" iconName="RemoveLink" aria-hidden="true" />
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <MenuItem header>Header</MenuItem>
-                <MenuItem eventKey={1}>link</MenuItem>
-                <MenuItem divider />
-                <MenuItem header>Header</MenuItem>
-                <MenuItem eventKey={2}>link</MenuItem>
-              </Dropdown.Menu>
-            </Dropdown>
-          </div>
-      )
+import DataTable from 'react-data-table-component';
+const constructUrlWithParams = (baseUrl, params) => {
+  const query = Object.keys(params)
+    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    .join('&');
+  return `${baseUrl}?${query}`;
+};
+
+const Payable = ({ invoiceType }) => {
+ 
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [tableData, setTableData] = useState([]);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [startDate, setStartDate] = useState(new Date());
+  // const dateChanged = (d) => {
+  //   setDate(d);
+  // };
+
+ 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const params = { invoice_type: 'ACCPAY' };
+        const baseUrl = 'http://localhost:8080/api/v1/invoice/';
+        const url = constructUrlWithParams(baseUrl, params);
+        console.log("Request URL:", url);
+        const response = await axios.get(url);
+
+        if (response.status === 200 && Array.isArray(response.data.data)) {
+          setTableData(response.data.data);
+          console.log("res--------",response)
+         
+        } else {
+          console.warn("Invalid response format or status:", response);
+          setTableData([]);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setShowError(true);
+        setErrorMessage(error.message);
+        setTableData([]);
+      }
+    };
+
+    fetchData();
+  }, [invoiceType]);
+  const columns = [
+    {
+      name: 'Invoice Date',
+      selector: row => row.Date,
+      sortable: true,
     },
-
-
-
-    // ... (repeat the structure for other rows)
+    {
+      name: 'Due Date',
+      selector: row => row.DueDate, // Assuming `values` is an array
+      sortable: true,
+    },
+    {
+      name: ' Planned Date',
+      selector: row => <div>  
+        <DatePicker
+     
+      selected={startDate}
+      onChange={(date) => setStartDate(date)}
+      dateFormat="dd MMM yyyy"
+      className="paybledtpckr"
+      
+    />  
+  
+      </div>, // Assuming `values` is an array
+      sortable: true,
+    },
+    {
+      name: 'Invoice Reference',
+      selector: row => row.Reference,
+      sortable: true,
+    },
+    {
+      name: 'Amount',
+      selector: row => '-$' + `${row.Total}`, // Assuming `values` is an array
+      sortable: true,
+    },
+    
+   
+   
+    {
+      name: 'Payment Method',
+      selector: row => <div>
+      <CFormSelect 
+  aria-label="Default select example"
+  options={[
+    { label: 'AMEX', value: 'AMEX' },
+  ]}
+  style={{border:'none'}}
+/>
+      </div>, // Assuming `values` is an array
+      sortable: true,
+    },
+    {
+      name: 'Amount To Pay',
+      selector: row =><div>
+    
+      </div>, // Assuming `values` is an array
+      sortable: true,
+    },
+    
   ];
-const Payable =()=>
-{
-    return(
-        <div class='Payable'>
-        <CCard class='card card-payable'>
+
+  return (
+    <div className='Payable'>
+      <CCard class='card card-payable'>
         <div class='sum-card'>
                <div class='invoice-text'>
                   <CCardBody class='text-invoicepay'>Scheduled Payments</CCardBody>
@@ -119,46 +170,36 @@ const Payable =()=>
                  
                   </div>
         </CCard>
-        <div class='text-tabs'>
+      <div className='text-tabs'>
         <Tabs
-      defaultActiveKey="home"
-      transition={false}
-      id="noanim-tab-example"
-      className="tab-text"
-    >
-      <Tab eventKey="ALL" title="ALL">
-      <CCard> 
-      <CCardBody class='text-bankacc'>Credit Cards AMEX</CCardBody>
-      <CTable>
-      <CTableHead>
-     
-      </CTableHead>
-      <CTableBody class='text-textbody'>
-
-        {tableData.map((rowData, index) => (
-          <CTableRow key={index} className='text-cctablerow '>
-            <CTableHeaderCell className='text-categorycell' scope="row">{rowData.category}</CTableHeaderCell>
-            {rowData.values.map((value, subIndex) => (
-              <CTableDataCell key={subIndex} className= 'text-cdatacell'>{value}</CTableDataCell>
-            ))}  
-          </CTableRow>
-        ))}
-      </CTableBody>
-    </CTable>
-      </CCard>
-      </Tab>
-      <Tab eventKey="Awaiting Approval" title="Awaiting Approval">
-       
-      </Tab>
-      
-      <Tab eventKey="Awaiting Payment" title="Awaiting Payment">
-       
-      </Tab>
-    </Tabs> 
-        </div>
-   </div>
-    );
+          defaultActiveKey="ALL"
+          transition={false}
+          id="noanim-tab-example"
+          className="tab-text"
+        >
+          <Tab eventKey="ALL" title="ALL">
+            <CCard>
+              <CCardBody className='text-bankacc'>Credit Cards AMEX</CCardBody>
+              <DataTable
+                columns={columns}
+                data={tableData}
+                defaultSortField="InvoiceNumber"
+                pagination
+                highlightOnHover
+                
+              />
+            </CCard>
+          </Tab>
+          <Tab eventKey="Awaiting Approval" title="Awaiting Approval">
+            {/* Content for Awaiting Approval tab */}
+          </Tab>
+          <Tab eventKey="Awaiting Payment" title="Awaiting Payment">
+            {/* Content for Awaiting Payment tab */}
+          </Tab>
+        </Tabs>
+      </div>
+    </div>
+  );
 }
+
 export default Payable;
-
-
