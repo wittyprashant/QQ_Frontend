@@ -1,98 +1,133 @@
-import react from "react";
-import {CFormInput, CCard,CCardBody, CCol,CTable,CTableRow,CTableHead,CTableDataCell,CTableHeaderCell,CTableBody} from "@coreui/react";
+import { useState, useEffect } from "react";
+import { CFormInput, CCard, CCardBody, CCol, CTable, CTableRow, CTableHead, CTableDataCell, CTableHeaderCell, CTableBody } from "@coreui/react";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import CIcon from '@coreui/icons-react';
 import { cilSearch } from "@coreui/icons";
-const tableData = [
-  
+import axios from 'axios';
+import React from "react";
+import DataTable from 'react-data-table-component';
+import { color } from "@mui/system";
+
+const constructUrlWithParams = (baseUrl, params) => {
+  const query = Object.keys(params)
+    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+    .join('&');
+  return `${baseUrl}?${query}`;
+};
+
+const Recievables = ({ invoiceType }) => {
+  const [tableData, setTableData] = useState([]);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const params = { invoice_type: 'ACCREC' };
+        const baseUrl = 'http://localhost:8080/api/v1/invoice/';
+        const url = constructUrlWithParams(baseUrl, params);
+        console.log("Request URL:", url);
+        const response = await axios.get(url);
+
+        if (response.status === 200 && Array.isArray(response.data.data)) {
+          setTableData(response.data.data);
+          console.log("res--------",response)
+         
+        } else {
+          console.warn("Invalid response format or status:", response);
+          setTableData([]);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setShowError(true);
+        setErrorMessage(error.message);
+        setTableData([]);
+      }
+    };
+
+    fetchData();
+  }, [invoiceType]);
+  const columns = [
     {
-       category: "Invoice Number",
-       values: ["Ref","To","Date","Due Date","Paid","Due","Status"]
-     },
+      name: 'Invoice Number',
+      selector: row => row.InvoiceNumber,
+      sortable: true,
+    },
     {
-       category: "INV-0030",
-       values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Awaiting Payment"]
-     },
-     {
-        category: "INV-0029",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Awaiting Payment"]
+      name: 'Ref',
+      selector: row => row.Reference,
+      sortable: true,
+    },
+    {
+      name: 'To',
+      selector: row => row.values, // Assuming `values` is an array
+      sortable: true,
+    },
+    
+    {
+      name: 'Date',
+      selector: row => row.Date, // Assuming `values` is an array
+      sortable: true,
+    },
+    {
+      name: 'Due Date',
+      selector: row => row.DueDate, // Assuming `values` is an array
+      sortable: true,
+    },
+    {
+      name: 'Paid',
+      selector: row => '-$' + `${row.AmountPaid}`, // Assuming `values` is an array
+      sortable: true,
+    },
+    {
+      name: 'Due',
+      selector: row => '-$' + `${row.AmountDue}`, // Assuming `values` is an array
+      sortable: true,
+    },
+    {
+      name: 'Status',
+      selector: row => {
+        let color = 'black'; // default color
+        if (row.Status === 'PAID') {
+          color = '#00C365';
+        } else if (row.Status === 'Awaiting Payment') {
+          color = '#FFBB56';
+        }
+        return (
+          <div style={{ color }}>
+            {row.Status}
+          </div>
+        );
       },
-      {
-        category: "INV-0028",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Awaiting Payment"]
-      },
-      {
-        category: "INV-0027",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Awaiting Payment"]
-      },
-      {
-        category: "INV-0026",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Awaiting Payment"]
-      },
-      {
-        category: "INV-0025",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Awaiting Payment"]
-      },
-      {
-        category: "INV-0024",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Awaiting Payment"]
-      },
-      {
-        category: "INV-0023",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Awaiting Payment"]
-      },
-      {
-        category: "INV-0022",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Awaiting Payment"]
-      },
-      {
-        category: "INV-0021",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Awaiting Payment"]
-      },
-       {
-        category: "INV-0020",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Awaiting Payment"]
-      },
-      {
-        category: "INV-0019",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Awaiting Payment"]
-      },
-      {
-        category: "INV-0018",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Paid"]
-      },
-      {
-        category: "INV-0017",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Paid"]
-      },
-      {
-        category: "INV-0016",
-        values: ["-","Customer Name","21 Dec 2022","28 Dec 2022","$0.00","$5,530","Paid"]
-      },
-    ]
-const Recievables=()=>
-{
-  const headers = tableData.length > 0 ? tableData[0].values : [];
-  
+      sortable: true,
+    },
+  ];
+
+  const headers = (tableData.length > 0 && Array.isArray(tableData[0].values)) ? tableData[0].values : [];
+
   const getStatusCellStyle = (status) => {
     if (status === "Awaiting Payment") {
-        return { color: "#FFBB56" }; // Yellow for Awaiting Payment
+      return { color: "#FFBB56" }; // Yellow for Awaiting Payment
     } else if (status === "Paid") {
-        return { color: "#00C365" }; // Green for Paid
+      return { color: "#00C365" }; // Green for Paid
     }
     return {}; // Default style if no conditions are met
-};
-      const filterTableData = (status) => {
-        return tableData.filter(row => row.values[6] === status);
-    };
-    const filterTableDataPaid = (status) => {
-      return tableData.filter(row => row.values[6] === status);
   };
-    return(
-      
-            <div class='Payable'>
-            <CCard class='card card-payable'>
+
+  const filterTableData = (Status) => {
+    if (!Array.isArray(tableData)) {
+      return []; // Return empty array if tableData is not an array
+    }
+    if (Status === "ALL") {
+      return tableData;
+    }
+    return tableData.filter(row => row.Status === Status);
+  }
+
+  return (
+    <div className='Payable'>
+     <CCard class='card card-payable'>
             <div class='sum-card'>
                    <div class='invoice-text'>
                       <CCardBody class='text-invoicepay'>Scheduled Receivables</CCardBody>
@@ -139,118 +174,72 @@ const Recievables=()=>
                      
                       </div>
             </CCard>
-            <div class='text-tabs'>
-           
-        <Tabs
-      defaultActiveKey="home"
-      transition={false}
-      id="noanim-tab-example"
-      className="tab-text"
-    >
-      <Tab eventKey="ALL" title="ALL">
-      <CCard> 
-      <CCol >
+      <div className='text-tabs'>
+        <Tabs  defaultActiveKey="ALL" transition={false} id="noanim-tab-example" className="tab-text">
+          <Tab eventKey="ALL" title="ALL">
+            <CCard>
+            <CCol >
      
-                    <CFormInput
-                        // onChange={(e) => {
-                        //     let newFilterText = e.target.value;
-                        //     this.setState({ filterText: newFilterText });
-                        //     this.props.onTransactionFilterList(newFilterText);
-                        // }}
-                        // value={this.state.filterText}
-                        icon={cilSearch}
-                        size="sm"
-                        class='searchinputform'
-                        placeholder="Search..."
-                    />
-                </CCol>
-     {/* <CCardBody class='text-bankacc'>Credit Cards AMEX</CCardBody> */}
-      <CTable>
-      <CTableHead>
-     
-      </CTableHead>
-      <CTableBody class='text-textbody'>
+     <CFormInput
+         // onChange={(e) => {
+         //     let newFilterText = e.target.value;
+         //     this.setState({ filterText: newFilterText });
+         //     this.props.onTransactionFilterList(newFilterText);
+         // }}
+         // value={this.state.filterText}
+         icon={cilSearch}
+         size="sm"
+         class='searchinputform'
+         placeholder="Search..."
+     />
+ </CCol>
 
-        {tableData.map((rowData, index) => (
-          <CTableRow key={index} className='text-cctablerow '>
-            <CTableHeaderCell className='text-categorycell' scope="row">{rowData.category}</CTableHeaderCell>
-            {rowData.values.map((value, subIndex) => (
-              <CTableDataCell key={subIndex} className= 'text-cdatacell' style={getStatusCellStyle(value)}>{value}</CTableDataCell>
-            ))}  
-          </CTableRow>
-        ))}
-      </CTableBody>
-    </CTable>
-      </CCard>
-      </Tab>
-      <Tab eventKey="Awaiting Approval" title="Awaiting Approval">
-       
-      </Tab>
-      
-      <Tab eventKey="Awaiting Payment" title="Awaiting Payment">
-      <CCard>
-              <CTable>
-                <CTableHead>
-                  <CTableRow>
-                    {headers.map((header, index) => (
-                      <CTableHeaderCell key={index} className='text-categorycell'>
-                        {header}
-                      </CTableHeaderCell>
-                    ))}
-                  </CTableRow>
-                </CTableHead>
-                <CTableBody className='text-textbody'>
-                  {filterTableData("Awaiting Payment").map((rowData, index) => (
-                    <CTableRow key={index} className='text-cctablerow'>
-                      <CTableHeaderCell className='text-categorycell'>
-                        {rowData.category}
-                      </CTableHeaderCell>
-                      {rowData.values.map((value, subIndex) => (
-                        <CTableDataCell key={subIndex} className='text-cdatacell' style={getStatusCellStyle(value)}>
-                          {value}
-                        </CTableDataCell>
-                      ))}
-                    </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable>
+ <DataTable
+                columns={columns}
+                data={filterTableData("ALL")}
+                defaultSortField="InvoiceNumber"
+                pagination
+                highlightOnHover
+              />
             </CCard>
-      </Tab>
-      <Tab eventKey="Paid" title="Paid">
-      <CCard>
-              <CTable>
-                <CTableHead>
-                 
-                </CTableHead>
-                <CTableRow>
-                    {headers.map((header, index) => (
-                      <CTableHeaderCell key={index} className='text-categorycell'>
-                        {header}
-                      </CTableHeaderCell>
-                    ))}
-                    
-                  </CTableRow>
-                <CTableBody className='text-textbody'>
-                  
-                  {filterTableData("Paid").map((rowData, index) => (
-                    <CTableRow key={index} className='text-cctablerow'>
-                      <CTableDataCell >
-                        {rowData.category}
-                      </CTableDataCell>
-                      {rowData.values.map((value, subIndex) => (
-                        <CTableDataCell key={subIndex} className='text-cdatacell' style={getStatusCellStyle(value)}>
-                          {value}
-                        </CTableDataCell>
-                      ))}
-                    </CTableRow>
-                  ))}
-                </CTableBody>
-              </CTable>
+          </Tab>
+          <Tab eventKey="Awaiting Approval" title="Awaiting Approval">
+          <CCard>
+            <DataTable
+          columns={columns}
+          data={filterTableData("Awaiting Approval")}
+          defaultSortField="InvoiceNumber"
+          pagination
+          highlightOnHover
+        />
             </CCard>
-      </Tab>
-    </Tabs> 
-        </div>
-            </div>
-    );
+          </Tab>
+          <Tab eventKey="Awaiting Payment" title="Awaiting Payment">
+            <CCard>
+            <DataTable
+          columns={columns}
+          data={filterTableData("Awaiting Payment")}
+          defaultSortField="InvoiceNumber"
+          pagination
+          highlightOnHover
+        />
+            </CCard>
+          </Tab>
+          <Tab eventKey="Paid" title="Paid">
+            <CCard>
+            <DataTable
+                columns={columns}
+                data={filterTableData("PAID")}
+                defaultSortField="InvoiceNumber"
+                pagination
+                highlightOnHover
+              />
+            </CCard>
+          </Tab>
+        </Tabs>
+      </div>
+    </div>
+  );
 }
+
 export default Recievables;
