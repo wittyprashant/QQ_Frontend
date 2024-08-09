@@ -92,7 +92,7 @@ const Payable = ({ invoiceType }) => {
     },
     {
       name: 'Amount',
-      selector: row => '-$' + `${row.Total}`, // Assuming `values` is an array
+      selector: row => '$' + `${row.Total}`, // Assuming `values` is an array
       sortable: true,
     },
     
