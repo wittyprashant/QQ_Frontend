@@ -10,7 +10,10 @@ import UnAuthenticatedRoute from './route/UnAuthenticatedRoute';
 const DefaultLayout = React.lazy(() => import('./hoc/Layout/Layout'));
 const Login = lazy(() => import('./components/auth/Login'));
 const Register = lazy(() => import('./components/auth/Register'));
+const ForgotPassword =lazy(() => import('./components/auth/ForgotPassword'));
 const Logout = lazy(() => import('./components/auth/Logout'));
+const OTP= lazy(() => import('./components/auth/OtpScreen'));
+const ChangePassword = lazy(()=> import('./components/auth/ChangePassword'))
 
 
 const loading = (
@@ -39,6 +42,9 @@ class App extends Component {
                 <Login />
               </AuthenticatedRoute>
             } />
+            <Route exact path='/forgotpassword' name="ForgotPassword Page" element={<ForgotPassword />} />
+            <Route exact path='/otp' name="OTP Page" element={<OTP />} />
+            <Route exact path='/changepassword' name="ChangePassword Page" element={<ChangePassword />} />
             <Route exact path='/register' name="Register Page" element={<Register />} />
             <Route path='/logout' element={<Logout />} />
   

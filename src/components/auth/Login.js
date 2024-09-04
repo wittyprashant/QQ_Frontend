@@ -225,7 +225,9 @@ class Login extends Component {
         validated: false,
         passwordVisible: false,
     };
-
+    goForgotPassword = () => {
+        this.props.navigate('/forgotpassword');
+    };
     handleSubmit = async (event) => {
         event.preventDefault();
         const form = event.currentTarget;
@@ -259,7 +261,7 @@ class Login extends Component {
             passwordVisible: !prevState.passwordVisible,
         }));
     };
-
+    
     render() {
         let errorMessage = null;
         if (this.props.error) {
@@ -329,9 +331,9 @@ class Login extends Component {
                                                 Remember Me
                                             </label>
                                         </CCol>
-                                        {/* <CCol>
-                                            <p className="mb-0 text-right">Forgot Password?</p>
-                                        </CCol> */}
+                                        <CCol>
+                                            <p className="mb-0 text-right" onClick={this.goForgotPassword}>Forgot Password?</p>
+                                        </CCol>
                                     </CRow>
                                     <CRow>
                                         <CButton color="primary" className="px-4" type="submit">

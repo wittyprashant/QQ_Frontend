@@ -28,6 +28,10 @@ export const authLogout = () => {
         type: actions.AUTH_LOGOUT,
     };
 };
+export const setUserId = (userId) => ({
+    type: 'SET_USER_ID',
+    payload: userId,
+});
 
 export const checkAuthTimeout = (expiresIn) => {
     return dispatch => {
@@ -76,7 +80,70 @@ export const userRegister = (role_id, first_name, last_name, email, password, co
         });
     }
 }
+export const userForgot = ( email ) => {
+    return dispatch => {
+        dispatch(authStart());
+        return axios.post(endPoint.ForgotPass, {email})
+        .then((response) => {
+            if (response.status === 200 && response.data.success) {
+                localStorage.setItem("userDetail", JSON.stringify(response.data.data));
+                dispatch(authSuccess(response.data.message));
+                return response;
+            } else {
+                dispatch(authFail(response.data.message));
+                return response;
+            }
+        })
+        .catch((error) => {
+            dispatch(authFail(error.message));
+            throw error;
+        });
+    }
+}
+export const userOTP = ( email ) => {
+    return dispatch => {
+        dispatch(authStart());
+        return axios.post(endPoint.ForgotPass, {email})
+        .then((response) => {
+            if (response.status === 200 && response.data.success) {
+                localStorage.setItem("userDetail", JSON.stringify(response.data.data));
+                dispatch(authSuccess(response.data.message));
+                return response;
+            } else {
+                dispatch(authFail(response.data.message));
+                return response;
+            }
+        })
+        .catch((error) => {
+            dispatch(authFail(error.message));
+            throw error;
+        });
+    }
+}
+export const userChangePassword = (id, password, confirm_password) => {
+    return (dispatch) => {
+        dispatch(authStart());
 
+        return axios.post('http://localhost:8080/api/v1/user/change_password/${id}', {
+            password: password,
+            confirm_password: confirm_password
+        })
+        .then((response) => {
+            if (response.status === 200 && response.data.success) {
+                localStorage.setItem("userDetail", JSON.stringify(response.data.data));
+                dispatch(authSuccess(response.data.message));
+                return response;
+            } else {
+                dispatch(authFail(response.data.message));
+                return response;
+            }
+        })
+        .catch((error) => {
+            dispatch(authFail(error.message));
+            throw error;
+        });
+    };
+};
 export const authCheckState = () => {
     return dispatch => {
         try {

@@ -268,7 +268,7 @@
 
 
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   COffcanvasBody,
   COffcanvas,
@@ -287,9 +287,10 @@ import {
   CTableBody,
   CTableDataCell,
   CTable,
-  CFormTextarea
+  CFormTextarea,
+  CBadge
 } from '@coreui/react';
-import { cilCheckAlt, cilSearch, cilX } from '@coreui/icons';
+import { cilCheckAlt, cilPaperclip, cilSearch, cilSend, cilX } from '@coreui/icons';
 import CIcon from '@coreui/icons-react';
 import XeroLogo from '../../assets/Images/XeroLogo.png';
 import notlogo from '../../assets/Images/not.png';
@@ -301,9 +302,34 @@ import rightdrop from '../../assets/Images/leftarrow.png';
 import Sidebar from '../../components/partials/Sidebar';
 import { Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import Header from '../../components/partials/Header';
+import axios from 'axios';
 // import { Document, pdfjs } from 'react-pdf';
 
 const BillComponent = ({ bills, showSidebar, toggleSidebar }) => {
+  const [tableData, setTableData] = useState([]);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+ 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const url = 'http://localhost:8080/api/v1/invoice';
+        const response = await axios.get(url);
+
+        if (response.status === 200 && Array.isArray(response.data.data)) {
+          setTableData(response.data.data); // Store the fetched data in state
+        } else {
+          console.warn("Invalid response format or status:", response);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setShowError(true);
+        setErrorMessage(error.message);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.min.mjs`;
   const [visible, setVisible] = useState(false);
@@ -321,14 +347,14 @@ const BillComponent = ({ bills, showSidebar, toggleSidebar }) => {
 	// 	setPageNumber(
 	// 		pageNumber + 1 >= numPages ? numPages : pageNumber + 1,
 	// 	);
-
+  
   return (
     <div>
       <Header headerText='Bills' />
       <div className='bill-section'>
-        <COffcanvas placement="start" visible={visible} onHide={() => setVisible(false)}>
+        <COffcanvas placement="start"  className='off-canvas' visible={visible} onHide={() => setVisible(false)}>
           <COffcanvasHeader>
-            <COffcanvasTitle>Invoice</COffcanvasTitle>
+            {/* <COffcanvasTitle>Invoice</COffcanvasTitle> */}
             <CCloseButton className="text-reset" onClick={() => setVisible(false)} />
           </COffcanvasHeader>
           <COffcanvasBody>
@@ -344,24 +370,36 @@ const BillComponent = ({ bills, showSidebar, toggleSidebar }) => {
           />
           <p className='outstanding-bill-text'>Outstanding Bills</p>
           <div className='bill-cards'>
-            <CCard className='card-bill' key={'bill.id'}>
+            {/* <CCard className='card-bill' key={'bill.id'}>
               <CCardBody>
                 <CCardTitle>{'Test'}</CCardTitle>
                 <CCardText className='bills-text'>{'bill.name'}</CCardText>
                 <CCardText className='bills-card-text'>{'bill.account'}</CCardText>
                 <CCardText className='bills-card-text'>{'bill.companyname'}</CCardText>
               </CCardBody>
-            </CCard>
-            {/* {bills.map(bill => (
+            </CCard> */}
+            
+            {tableData.map((bill) => (
               <CCard className='card-bill' key={bill.id}>
                 <CCardBody>
-                  <CCardTitle>{bill.title}</CCardTitle>
-                  <CCardText className='bills-text'>{bill.name}</CCardText>
-                  <CCardText className='bills-card-text'>{bill.account}</CCardText>
-                  <CCardText className='bills-card-text'>{bill.companyname}</CCardText>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                        <CCardTitle style={{fontSize:'16px',fontWeight:'bold'}}>{bill.InvoiceID}</CCardTitle>
+                        <CBadge 
+                          color={bill.Status === 'PAID' ? 'secondary' : 'info'} 
+                          shape="rounded-pill" 
+                          style={{ marginLeft: 'auto', width: '23%', height: '12%',marginBottom:25 }}
+                        >
+                          {bill.Status}
+                        </CBadge>
+                  </div>
+                  
+                  <CCardText className='bills-text'>SupplierName</CCardText>
+                  <CCardText className='bills-card-text'>${bill.Total}{bill.CurrencyCode}</CCardText>
+                  <CCardText className='bills-card-text'>CompanyName</CCardText>
                 </CCardBody>
               </CCard>
-            ))} */}
+            ))}
+           
           </div>
         </div>
         <div className='section-card'>
@@ -493,11 +531,40 @@ const BillComponent = ({ bills, showSidebar, toggleSidebar }) => {
               </div>
               <p className='workflow-text'>History</p>
               <div className='bottom-border'></div>
-              <CFormTextarea
-                id="floatingTextarea"
-                floatingLabel="Comments"
-                placeholder="Leave a comment here"
-              ></CFormTextarea>
+              <div style={{ position: 'relative' }}>
+                <CFormTextarea
+                  id="floatingTextarea"
+                  floatingLabel="Comments"
+                  placeholder="Leave a comment here"
+                  style={{ marginTop: 20, paddingRight: '40px' }} // Add padding to the right to make space for the icon
+                ></CFormTextarea>
+                <div style={{display:'flex',flexDirection:'row'}}>
+                <CIcon
+                  icon={cilPaperclip}
+                  style={{
+                    position: 'absolute',
+                    right: '45px', // Position from the right
+                    top: '80%', // Center vertically
+                    transform: 'translateY(-50%)',
+                    cursor: 'pointer',
+                  }}
+                />
+                  <CIcon
+                  icon={cilSend}
+                
+                  style={{
+                    position: 'absolute',
+                    right: '20px', // Position from the right
+                    top: '80%', // Center vertically
+                    transform: 'translateY(-50%)',
+                    cursor: 'pointer',
+                    color:'#00C0F3'
+                  }}
+                />
+                </div>
+               
+              </div>
+              
             </CCardBody>
           </CCard>
           {showSidebar ? <div className='bg-color'></div> : null}

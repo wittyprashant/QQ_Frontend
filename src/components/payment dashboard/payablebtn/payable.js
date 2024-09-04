@@ -72,7 +72,7 @@ const Payable = ({ invoiceType }) => {
     },
     {
       name: ' Planned Date',
-      selector: row => <div>  
+      selector: row => <div >  
         <DatePicker
      
       selected={startDate}
@@ -81,7 +81,7 @@ const Payable = ({ invoiceType }) => {
       className="paybledtpckr"
       
     />  
-  
+  <CIcon icon={cilCalendar} style={{position:'absolute',right:32,top:12}} />
       </div>, // Assuming `values` is an array
       sortable: true,
     },

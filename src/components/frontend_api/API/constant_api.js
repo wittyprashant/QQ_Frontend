@@ -5,6 +5,8 @@ export const endPoint = {
   postMethod: "Post",
   getMethod: "Get",
   register:"user/register",
-  Transaction:"transaction"
+  Transaction:"transaction",
+  ForgotPass:"user/forgot-password",
+  changepass:"user/change_password",
  
 };

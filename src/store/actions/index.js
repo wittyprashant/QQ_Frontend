@@ -2,6 +2,9 @@ export {
 	authLogout,
 	userLogin,
 	userRegister,
+	userForgot,
+	userOTP,
+	userChangePassword,
 	authCheckState
 } from "./auth"
 

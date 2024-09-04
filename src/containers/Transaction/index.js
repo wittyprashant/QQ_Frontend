@@ -212,12 +212,18 @@ class Transaction extends Component {
           cell: row => {
             return (
               <div>
-                <CTooltip content="Details">
-                <button onClick={(e) => { e.preventDefault(); this.toggleVisibility([3, 4, 5], ['assignedTo', 'invoice', 'status'], '60%'); }} style={{ background: 'none', border: 'none', padding: 0, fontSize: '12px', color: 'gray', cursor: 'pointer' }}>
-  Details
-</button>
-                </CTooltip>
-              </div>
+      <CTooltip content="Details">
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            this.toggleVisibility([3, 4, 5], ['assignedTo', 'invoice', 'status'], '60%');
+          }}
+          style={{ background: 'none', border: 'none', padding: 0, fontSize: '12px', color: 'gray', cursor: 'pointer' }}
+        >
+          Details
+        </button>
+      </CTooltip>
+    </div>
             )
           }
         },
@@ -333,22 +339,18 @@ class Transaction extends Component {
       };
     
       toggleVisibilitycard = (columnIndices, paragraphIds, cardWidth) => {
-        const { hiddenColumns } = this.state;
-        const updatedHiddenColumns = [...hiddenColumns];
-      
-        const updatedHiddenParagraphs = [...this.state.hiddenParagraphs];
-        const updatedCardVisibility = !this.state.isCardVisible;
+        const { hiddenColumns, hiddenParagraphs, isCardVisible } = this.state;
+        let updatedHiddenColumns = [...hiddenColumns];
+        let updatedHiddenParagraphs = [...hiddenParagraphs];
+        let updatedCardVisibility = !isCardVisible;
       
         // Toggle visibility for specified columns
         columnIndices.forEach((columnIndex) => {
           const columnIndexInHidden = updatedHiddenColumns.indexOf(columnIndex);
           if (columnIndexInHidden !== -1) {
-             updatedHiddenColumns.splice(columnIndexInHidden, 1); // Column is visible, so remove from hiddenColumns
-        
-            const updatedCardVisibility = !this.state.isCardVisible;  
-        } else {
+            updatedHiddenColumns.splice(columnIndexInHidden, 1); // Column is visible, so remove from hiddenColumns
+          } else {
             updatedHiddenColumns.push(columnIndex); // Column is hidden, so add to hiddenColumns
-            const updatedCardVisibility = !this.state.isCardVisible;
           }
         });
       
@@ -356,74 +358,50 @@ class Transaction extends Component {
         paragraphIds.forEach((paragraphId) => {
           const paragraphIndex = updatedHiddenParagraphs.indexOf(paragraphId);
           if (paragraphIndex !== -1) {
-             updatedHiddenParagraphs.splice(paragraphIndex, 1); // Paragraph is visible, so remove from hiddenParagraphs
-         
-        } else {
+            updatedHiddenParagraphs.splice(paragraphIndex, 1); // Paragraph is visible, so remove from hiddenParagraphs
+          } else {
             updatedHiddenParagraphs.push(paragraphId); // Paragraph is hidden, so add to hiddenParagraphs
-          
           }
         });
       
+        // Set card width based on visibility state
+        const updatedCardWidth = updatedCardVisibility ? cardWidth : '100%';
       
-    
-        const columnsVisible = updatedHiddenColumns.length;
-        const updatedCardWidth = columnsVisible ? cardWidth : '100%';
         this.setState({
-            hiddenColumns: updatedHiddenColumns,
-            hiddenParagraphs: updatedHiddenParagraphs,
-             cardWidth: updatedCardWidth,
-          
-            //cardWidth: updatedCardVisibility ? '60%' : '100%',
-            //cardWidth: columnsVisible ? cardWidth : '100%',
-    
+          hiddenColumns: updatedHiddenColumns,
+          hiddenParagraphs: updatedHiddenParagraphs,
+          isCardVisible: updatedCardVisibility,
+          cardWidth: updatedCardWidth,
         });
-    };
+      };
+      
       toggleVisibility = (columnIndices, paragraphIds, cardWidth) => {
-        const { hiddenColumns } = this.state;
-        const updatedHiddenColumns = [...hiddenColumns];
-      
-        const updatedHiddenParagraphs = [...this.state.hiddenParagraphs];
-        const updatedCardVisibility = !this.state.isCardVisible;
-      
-        // Toggle visibility for specified columns
-        columnIndices.forEach((columnIndex) => {
-          const columnIndexInHidden = updatedHiddenColumns.indexOf(columnIndex);
-          if (columnIndexInHidden !== -1) {
-             //updatedHiddenColumns.splice(columnIndexInHidden, 1); // Column is visible, so remove from hiddenColumns
-        
-            const updatedCardVisibility = !this.state.isCardVisible;  
+    const { hiddenColumns, isCardVisible } = this.state;
+    let updatedHiddenColumns = isCardVisible 
+        ? [...hiddenColumns] 
+        : [0, 1, 2]; // Indices of Date, Description, Amount columns
+
+    // Toggle visibility for specified columns
+    columnIndices.forEach((columnIndex) => {
+        const columnIndexInHidden = updatedHiddenColumns.indexOf(columnIndex);
+        if (columnIndexInHidden !== -1) {
+            // Column is visible, so remove from hiddenColumns
+            updatedHiddenColumns.splice(columnIndexInHidden, 1);
         } else {
-            updatedHiddenColumns.push(columnIndex); // Column is hidden, so add to hiddenColumns
-            const updatedCardVisibility = !this.state.isCardVisible;
-          }
-        });
+            // Column is hidden, so add to hiddenColumns
+            updatedHiddenColumns.push(columnIndex);
+        }
+    });
+
+    // Adjust the card's visibility and width
+    this.setState({
+        hiddenColumns: updatedHiddenColumns,
+        isCardVisible: !isCardVisible,
+        cardWidth: !isCardVisible ? cardWidth : '100%', // Set the width to 100% or the provided width
+    });
+};
       
-        // Toggle visibility for specified paragraphs
-        paragraphIds.forEach((paragraphId) => {
-          const paragraphIndex = updatedHiddenParagraphs.indexOf(paragraphId);
-          if (paragraphIndex !== -1) {
-            // updatedHiddenParagraphs.splice(paragraphIndex, 1); // Paragraph is visible, so remove from hiddenParagraphs
-         
-        } else {
-            updatedHiddenParagraphs.push(paragraphId);
-             // Paragraph is hidden, so add to hiddenParagraphs
-          
-          }
-        });
-      
-      
-        const { filterVisible } = this.state;
-    
-        this.setState({
-            hiddenColumns: updatedHiddenColumns,
-            hiddenParagraphs: updatedHiddenParagraphs,
-            cardWidth: cardWidth,
-            isCardVisible: true,
-            filterVisible: filterVisible,
-            filterMarginRight: filterVisible ? '38%' : '0px', 
-    
-        });
-    };
+  
     componentDidMount() {
         const param = {
           order: 2,
@@ -573,24 +551,21 @@ class Transaction extends Component {
     <CButton color="primary" onClick={this.handleSubmit}>Save changes</CButton>
   </CModalFooter>
             </CModal>
-  <DataTable
-                        columns={this.state.columnTransaction}
-                        data={this.props.data}
-                        defaultSortFieldId={5}
-                        defaultSortAsc={false}
-                        progressPending={this.props.loading}
-                        pagination
-                        paginationResetDefaultPage={this.state.resetPaginationToggle} // optionally, a hook to reset pagination to page 1
-                        //subHeader
-                       // subHeaderComponent={this.getSubHeaderComponent()}
-                        // paginationServer
-                        className='trasaction_data_table'
-                        // paginationTotalRows="11"
-                         onChangePage={this.handlePageChange}
-                        theme="solarized"
-                        striped
-                        // style={{ width: this.state.cardWidth }}
-                    />
+            <DataTable
+            columns={this.state.columnTransaction}
+            data={this.props.data}
+            defaultSortFieldId={5}
+            defaultSortAsc={false}
+            progressPending={this.props.loading}
+            pagination
+            paginationResetDefaultPage={this.state.resetPaginationToggle}
+            className='trasaction_data_table'
+            onChangePage={this.handlePageChange}
+            theme="solarized"
+            striped
+            style={{ width: this.state.cardWidth }} // Adjust the table width dynamically
+            />
+
                
              
                  
@@ -786,8 +761,7 @@ class Transaction extends Component {
                            </Tabs> 
  
                    </div>
-                   {!commentTextVisible?'':
-                   <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+                   {commentTextVisible?<div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
                    <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}>
                      {messages.map((msg) => (
                        <div
@@ -828,7 +802,8 @@ class Transaction extends Component {
                      <CIcon icon={cilSend}/>
                      </button>
                    </div>
-                 </div>
+                 </div>:''
+                   
                    }
         {!HistoryTextVisible?'':
         <div class='history section'>
