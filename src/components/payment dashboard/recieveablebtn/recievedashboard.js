@@ -32,8 +32,7 @@ const Recievables = ({ invoiceType }) => {
 
         if (response.status === 200 && Array.isArray(response.data.data)) {
           setTableData(response.data.data);
-          console.log("res--------",response)
-         
+          console.log("res--------",response) 
         } else {
           console.warn("Invalid response format or status:", response);
           setTableData([]);

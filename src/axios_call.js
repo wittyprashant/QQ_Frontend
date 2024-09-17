@@ -8,7 +8,7 @@ const instance = axios.create({
 
 const AxiosInterceptor = ({ children }) => {
     const navigate = useNavigate();
-
+    
     useEffect(() => {
         const resInterceptor = response => {
             console.log('Response:', response); // Debug information

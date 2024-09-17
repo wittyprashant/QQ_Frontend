@@ -212,18 +212,16 @@ class Transaction extends Component {
           cell: row => {
             return (
               <div>
-      <CTooltip content="Details">
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            this.toggleVisibility([3, 4, 5], ['assignedTo', 'invoice', 'status'], '60%');
-          }}
-          style={{ background: 'none', border: 'none', padding: 0, fontSize: '12px', color: 'gray', cursor: 'pointer' }}
-        >
-          Details
-        </button>
-      </CTooltip>
-    </div>
+              <CTooltip content="Details">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    this.toggleVisibility([3, 4, 5], ['assignedTo', 'invoice', 'status'], '60%');
+                  }}
+                  style={{ background: 'none', border: 'none', padding: 0, fontSize: '12px', color: 'gray', cursor: 'pointer' }}
+                > Details </button>
+              </CTooltip>
+            </div>
             )
           }
         },
@@ -328,8 +326,6 @@ class Transaction extends Component {
           cardWidth: columnsVisible ? cardWidth : '100%',
           filterVisible: filterVisible,
           filterMarginRight: filterVisible ? '3%' : '0%', 
-      
-         
         }));
       };
       toggleModal = (id) => {
@@ -417,17 +413,17 @@ class Transaction extends Component {
       }
      
 
-  fetchTransactionDetail = async (id) => {
-    try {
-      const response =  this.props.getransactionDetail(id); // Fixed method name
-      if (response && response.data) {
-        console.log('Response transactaion:', response.data);
-        this.setState({ transactionDetail: response.data });
+    fetchTransactionDetail = async (id) => {
+      try {
+        const response =  this.props.getransactionDetail(id); // Fixed method name
+        if (response && response.data) {
+          console.log('Response transactaion:', response.data);
+          this.setState({ transactionDetail: response.data });
+        }
+      } catch (error) {
+        console.error('Error fetching transaction details:', error);
       }
-    } catch (error) {
-      console.error('Error fetching transaction details:', error);
-    }
-  };
+    };
     
     delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
     deleteTransaction(id) {
