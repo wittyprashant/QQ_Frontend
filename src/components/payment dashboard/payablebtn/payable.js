@@ -1,283 +1,30 @@
-// import React, { useState,useEffect } from "react";
-// import Tab from 'react-bootstrap/Tab';
-// import Tabs from 'react-bootstrap/Tabs';
-// import { CCard, CCardBody, CCol, CTable, CTableRow,CInputGroup,CFormSelect,CButton,CFormInput, CTableHead, CTableDataCell, CTableHeaderCell, CTableBody,CDropdown,CDropdownToggle,CDropdownMenu,CDropdownItem, CTooltip } from "@coreui/react";
-// import { Dropdown } from "react-bootstrap";
-// import CIcon from "@coreui/icons-react";
-// import { cilCalendar } from "@coreui/icons";
-// import DatePicker from 'react-datepicker';
-// import "react-datepicker/dist/react-datepicker.css";
-// import { Icon, MenuItem, Select } from "@mui/material";
-// import { FaEdit, FaRegCalendar } from "react-icons/fa";
-// import moment from 'moment';
-// import axios from 'axios';
-
-// import DataTable from 'react-data-table-component';
-// const constructUrlWithParams = (baseUrl, params) => {
-//   const query = Object.keys(params)
-//     .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
-//     .join('&');
-//   return `${baseUrl}?${query}`;
-// };
-
-// const Payable = ({ invoiceType }) => {
- 
-//   const [showDatePicker, setShowDatePicker] = useState(false);
-//   const [tableData, setTableData] = useState([]);
-//   const [showError, setShowError] = useState(false);
-//   const [errorMessage, setErrorMessage] = useState("");
-//   const [startDate, setStartDate] = useState(new Date());
- 
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const params = { invoice_type: 'ACCPAY' };
-//         const baseUrl = 'http://localhost:8080/api/v1/invoice/';
-//         const url = constructUrlWithParams(baseUrl, params);
-//         console.log("Request URL:", url);
-//         const response = await axios.get(url);
-
-//         if (response.status === 200 && Array.isArray(response.data.data)) {
-//           setTableData(response.data.data);
-//           console.log("res--------",response)
-         
-//         } else {
-//           console.warn("Invalid response format or status:", response);
-//           setTableData([]);
-//         }
-//       } catch (error) {
-//         console.error("Error fetching data:", error);
-//         setShowError(true);
-//         setErrorMessage(error.message);
-//         setTableData([]);
-//       }
-//     };
-
-    
-
-//     fetchData();
-//   }, [invoiceType]);
-  
-//   const columns = [
-//     {
-//       name: 'Invoice Date',
-//       selector: row => row.Date,
-//       sortable: true,
-//     },
-//     {
-//       name: 'Due Date',
-//       selector: row => row.DueDate, // Assuming `values` is an array
-//       sortable: true,
-//     },
-//     {
-//       name: 'Planned Date',
-//       selector: row => <div >  
-//         <DatePicker
-     
-//       selected={startDate}
-//       onChange={(date) => setStartDate(date)}
-//       dateFormat="dd MMM yyyy"
-//       className="paybledtpckr"
-      
-//     />  
-//     <CIcon icon={cilCalendar} style={{position:'absolute',right:32,top:12}} />
-//       </div>, // Assuming `values` is an array
-//       sortable: true,
-//     },
-//     {
-//       name: 'Invoice Reference',
-//       selector: row => row.Reference,
-//       sortable: true,
-//     },
-//     {
-//       name: 'Amount',
-//       selector: row => '$' + `${row.Total}`, // Assuming `values` is an array
-//       sortable: true,
-//     },
-//     {
-//       name: 'Payment Method',
-//       selector: row => <div>
-//       <CFormSelect 
-//         aria-label="Default select example"
-//         options={[
-//           { label: 'AMEX', value: 'AMEX' },
-//         ]}
-//         style={{border:'none'}}
-//       />
-//       </div>, // Assuming `values` is an array
-//       sortable: true,
-//     },
-//     {
-//       name: 'Amount To Pay',
-//       selector: row =><div>
-    
-//       </div>, // Assuming `values` is an array
-//       sortable: true,
-//     },
-//     {
-//       name: 'Actions',
-//       cell: row => {
-//         return (
-//           <div>
-//           <CTooltip content="Details">
-//             <CButton
-//               onClick={(e) => {
-//                 e.preventDefault();
-//                 this.toggleVisibility([3, 4, 5], ['assignedTo', 'invoice', 'status'], '60%');
-//               }}
-//               style={{ background: 'none', border: 'none', padding: 0, fontSize: '12px', color: 'gray', cursor: 'pointer' }}
-//             > Details </CButton>
-//           </CTooltip>
-//         </div>
-//         )
-//       },
-//       sortable: false,
-//     },
-    
-//   ];
-
-//   toggleVisibility = toggleVisibility.bind(this);
-//   toggleVisibility = (columnIndices, paragraphIds, cardWidth) => {
-//     const { hiddenColumns, isCardVisible } = this.state;
-//     let updatedHiddenColumns = isCardVisible 
-//         ? [...hiddenColumns] 
-//         : [0, 1, 2]; // Indices of Date, Description, Amount columns
-
-//     // Toggle visibility for specified columns
-//     columnIndices.forEach((columnIndex) => {
-//         const columnIndexInHidden = updatedHiddenColumns.indexOf(columnIndex);
-//         if (columnIndexInHidden !== -1) {
-//             // Column is visible, so remove from hiddenColumns
-//             updatedHiddenColumns.splice(columnIndexInHidden, 1);
-//         } else {
-//             // Column is hidden, so add to hiddenColumns
-//             updatedHiddenColumns.push(columnIndex);
-//         }
-//     });
-
-//     // Adjust the card's visibility and width
-//     this.setState({
-//         hiddenColumns: updatedHiddenColumns,
-//         isCardVisible: !isCardVisible,
-//         cardWidth: !isCardVisible ? cardWidth : '100%', // Set the width to 100% or the provided width
-//     });
-// };
-
-//   return (
-//     <div className='Payable'>
-//       <CCard class='card card-payable'>
-//         <div class='sum-card'>
-//                <div class='invoice-text'>
-//                   <CCardBody class='text-invoicepay'>Scheduled Payments</CCardBody>
-//                </div>
-//                <div class="border-solid"></div>
-//                <div class='text-scheduledpay'>
-                
-//                 <div  class="invoice-boxjan">
-//                      <div class="border-rightdate">
-//                         <CCol class='text-Receipt'>
-                       
-//                            <CCardBody class='text-await'>2 JAN 2023</CCardBody>
-//                            <CCard class='text-price'>$10,657</CCard>
-                          
-//                         </CCol>
-//                      </div>
-                     
-//                      <div class="border-rightdate">
-//                         <CCol class='text-Receipt'>
-//                            <CCardBody class='text-date'>9 JAN 2023</CCardBody>
-//                            <CCard class='text-dateprice'>$12,065</CCard>
-//                         </CCol>
-//                      </div>
-//                      <div class="border-rightdate">
-//                         <CCol class='text-Receipt'>
-//                            <CCardBody class='text-date'>16 JAN 2023</CCardBody>
-//                            <CCard class='text-dateprice'>$7,031</CCard>
-//                         </CCol>
-//                      </div>
-//                      <div class="border-rightdate">
-//                         <CCol class='text-Receipt'>
-//                            <CCardBody class='text-date'>23 JAN 2023</CCardBody>
-//                            <CCard class='text-dateprice'>$3,001</CCard>
-//                         </CCol>
-//                      </div>
-//                      <div >
-//                         <CCol class='text-Receipt'>
-//                            <CCardBody class='text-date'>30 JAN 2023</CCardBody>
-//                            <CCard class='text-dateprice'>$500</CCard>
-//                         </CCol>
-//                      </div>
-//                   </div>
-//                   </div>
-                 
-//                   </div>
-//         </CCard>
-//       <div className='text-tabs'>
-//         <Tabs
-//           defaultActiveKey="ALL"
-//           transition={false}
-//           id="noanim-tab-example"
-//           className="tab-text"
-//         >
-//           <Tab eventKey="ALL" title="ALL">
-//             <CCard>
-//               <CCardBody className='text-bankacc'>Credit Cards AMEX</CCardBody>
-//               <DataTable
-//                 columns={columns}
-//                 data={tableData}
-//                 defaultSortField="InvoiceNumber"
-//                 pagination
-//                 highlightOnHover
-                
-//               />
-//             </CCard>
-//           </Tab>
-//           <Tab eventKey="Awaiting Approval" title="Awaiting Approval">
-//             {/* Content for Awaiting Approval tab */}
-//           </Tab>
-//           <Tab eventKey="Awaiting Payment" title="Awaiting Payment">
-//             {/* Content for Awaiting Payment tab */}
-//           </Tab>
-//         </Tabs>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default Payable;
 import React, { useState, useEffect } from "react";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import {
   CCard,
-    CCardHeader,
     CCardBody,
-    CFormInput,
     CRow,
-    CCol,
     CFormSelect,
     CTooltip,
     CBadge,
     CButton,
-    CImage,
     CAvatar,
     CTable,CTableRow,CTableDataCell,CTableHeaderCell,CTableHead,
     CModal,
     CModalHeader,
     CModalBody,
-    CModalFooter,
-    CModalTitle
 } from "@coreui/react";
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { cilEyedropper, cilArrowRight, cilCheckAlt, cilXCircle, cilX,cilPencil,cilCheckCircle,cilInfo, cilSend } from '@coreui/icons';
+import { cilCheckCircle, cilSend, cilCalendar } from '@coreui/icons';
 import CIcon from "@coreui/icons-react";
-import { cilCalendar } from "@coreui/icons";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import axios from 'axios';
 import DataTable from 'react-data-table-component';
 import leftarrow from '../../../assets/Images/leftarrow.png';
+// import rightarrow from '../../../assets/Images/rightarrow.png';
 import avatar8 from '../../../assets/Images/avatars/default_user.png'
 import filter from '../../../assets/Images/filter.png';
 import InfoSharpIcon from '@mui/icons-material/InfoSharp';
@@ -285,7 +32,7 @@ import HistoryIcon from '@mui/icons-material/History';
 import edit  from '../../../assets/Images/whiteedit.png';
 import Header from '../../../components/partials/Header';
 import { FaCalendarAlt, FaEdit, FaRegQuestionCircle } from 'react-icons/fa';
-
+import Transaction from "../../../containers/Transaction";
 
 // Construct URL with params function
 const constructUrlWithParams = (baseUrl, params) => {
@@ -300,12 +47,11 @@ const Payable = ({ invoiceType }) => {
   const [tableData, setTableData] = useState([]);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [hiddenColumns, setHiddenColumns] = useState([0, 1, 2]); // Initial hidden columns
-  const [isCardVisible, setIsCardVisible] = useState(false); // Manage card visibility
+  const [hiddenColumns, setHiddenColumns] = useState([0, 1, 2]);
+  const [isCardVisible, setIsCardVisible] = useState(false);
   const [hiddenParagraphs, setHiddenParagraphs] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [modalVisible, setModalVisibleState] = useState(null);
   const [isCardclose, setIsCardClose] = useState(true);
   const [cardWidth, setCardWidth] = useState('100%');
   const [columnsVisible, setColumnsVisible] = useState(true);
@@ -315,7 +61,8 @@ const Payable = ({ invoiceType }) => {
   const [job, setJob] = useState('');
   const [HistoryTextVisible, setHistoryTextVisible] = useState(false);
   const [selectedButton, setSelectedButton] = useState(null);
-  
+  const [accounts, setAccounts] = useState([]);
+
   const historydata = [
     {
         EditBy:'Edited By Daniel K',
@@ -335,6 +82,7 @@ const Payable = ({ invoiceType }) => {
         date:' 20 Oct 2022',
     }
 ]
+const [modalVisible, setModalVisible] = useState(null);
   const [messages, setMessages] = useState([
     { id: 1, sender: 'Daniel K.', text: 'Duis congue velit elit, at accumsan nisi malesuada fermentum.', type: 'sent' },
     { id: 2, sender: 'Rachel L.', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. .', type: 'received' },
@@ -349,12 +97,33 @@ const Payable = ({ invoiceType }) => {
   const [transactionType, setTransactionType] = useState([
     { value: 'SPEND', label: 'SPEND' },
     { value: 'AUTHORISED', label: 'AUTHORISED' },
-    { value: 'DELETED', label: 'DELETED' },
+    { value: 'DELETEDDe', label: 'DELETED' },
   ]);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [startDate, setStartDate] = useState(null);
-// Initial card width for hidden state
+
+  const dropdownContent = (
+    <div className='custom-dropdown-content'>
+         <CRow>
+      <div class='logo-dropdown'>
+        <select
+          id="dropdown"
+          class='headertext-dropdown'
+         // value={this.state.selectedValue}
+         // onChange={this.handleChange}
+        >
+          <option value="">Select Bank Account</option>
+          <option value="option1">Option 1</option>
+          <option value="option2">Option 2</option>
+          <option value="option3">Option 3</option>
+        </select>
+
+       
+      </div>
+      </CRow>
+    </div>
+  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -374,16 +143,36 @@ const Payable = ({ invoiceType }) => {
         setErrorMessage(error.message);
         setTableData([]);
       }
+
+      try {
+        if (modalVisible === 'jobNumber') {
+          axios.get('http://localhost:8080/api/v1/account/')
+            .then(response => {
+              console.log('response: ' + response);
+              setAccounts(response.data);
+            })
+            .catch(error => {
+              console.error('There was an error fetching the accounts!', error);
+            });
+        }
+      } catch(error) {
+        console.log('Error');
+      }
     };
 
     fetchData();
   }, [invoiceType]);
 
+  const toggleModal = (modalName) => {
+    if (modalVisible === modalName) {
+      setModalVisible(null);
+    } else {
+      setModalVisible(modalName); 
+    }
+  };
   const toggleCardVisibility = () => {
-    // Toggle card visibility
     setIsCardVisible(!isCardVisible);
 
-    // Update card width (show it at 40% when visible, otherwise hide it)
     setCardWidth(!isCardVisible ? '40%' : '0%');
   };
 
@@ -394,6 +183,11 @@ const Payable = ({ invoiceType }) => {
   };
 
   const columns = [
+    {
+      name: 'Invoice Number',
+      selector: row => row.InvoiceNumber,
+      sortable: true,
+    },
     { name: 'Invoice Date', selector: row => row.Date, sortable: true },
     { name: 'Due Date', selector: row => row.DueDate, sortable: true },
     {
@@ -410,6 +204,23 @@ const Payable = ({ invoiceType }) => {
         </div>
       ),
       sortable: true,
+},
+{
+  name: 'Status',
+  selector: row => {
+    let color = 'black';
+    if (row.Status === 'PAID') {
+      color = '#00C365';
+    } else if (row.Status === 'Awaiting Payment') {
+      color = '#FFBB56';
+    }
+    return (
+      <div style={{ color }}>
+        {row.Status}
+      </div>
+    );
+  },
+  sortable: true,
 },
     { name: 'Invoice Reference', selector: row => row.Reference, sortable: true },
     { name: 'Amount', selector: row => '$' + `${row.Total}`, sortable: true },
@@ -467,8 +278,6 @@ const Payable = ({ invoiceType }) => {
 
       <div className='text-tabs'>
       <style>{`
-      
-
         .details-card {
           width: 40%; /* Adjust card width as per your requirement */
           height:100%;
@@ -481,14 +290,8 @@ const Payable = ({ invoiceType }) => {
           transition: all 0.3s ease-in-out;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
           background-color: #fff; /* Set background color for better visibility */
-         
-          
-    
-  
- 
         }
 
-     
       `}</style>
         <Tabs
           defaultActiveKey="ALL"
@@ -531,34 +334,28 @@ const Payable = ({ invoiceType }) => {
                 cursor: 'pointer'
               }}
               >
-               
-            
-             Close {/* Unicode for "×" symbol */}
+             Close
             </CButton>
-            {/* Content to be shown when "Details" is clicked */}
             <div>
-                            <div class='text-img'>
-                            <img alt="left-arrow" src={leftarrow} class='arrow-img'/>
-                            </div>
-                           
-                            <div>
-                                <p class='dollar-amt'>-$2,200.00</p>
-                                <p class='traction-text'>Transaction XXXXXX 2000444453531 Company</p>
-                                <p class='traction-text'>Thu 23 Sep 2022</p>
-                                <p class='sydtime-text'> 08:23 AM (SYD/MEL Time)</p>
-                                <p class='sydtime-text'>Receipt #: J000000000000</p>
-                            </div>
-                            <div class='border-bottom'></div>
-                            <div class='avatar-badge'>
-                            <CAvatar src={avatar8} size="md" />
-                            <p class='dum-text'>Daniel K.</p>
-                            {/* <p class='reassign-text'>REASSIGN</p> */}
-                            <div className='badge-ready'>
-                              <CBadge color="success" shape="rounded-pill" style={{width:'120%'}} >READY</CBadge>
-                            </div>
-                            </div>
-                            
-                         
+              <div class='text-img'>
+              <img alt="left-arrow" src={leftarrow} class='arrow-img'/>
+              </div>
+              <div>
+                  <p class='dollar-amt'>-$2,200.00</p>
+                  <p class='traction-text'>Transaction XXXXXX 2000444453531 Company</p>
+                  <p class='traction-text'>Thu 23 Sep 2022</p>
+                  <p class='sydtime-text'> 08:23 AM (SYD/MEL Time)</p>
+                  <p class='sydtime-text'>Receipt #: J000000000000</p>
+              </div>
+              <div class='border-bottom'></div>
+              <div class='avatar-badge'>
+              <CAvatar src={avatar8} size="md" />
+              <p class='dum-text'>Daniel K.</p>
+              {/* <p class='reassign-text'>REASSIGN</p> */}
+              <div className='badge-ready'>
+                <CBadge color="success" shape="rounded-pill" style={{width:'120%'}} >READY</CBadge>
+              </div>
+              </div>           
           <div >
            <p class='query-text'>Query Details</p>
            <CTable class="transcationtble">
@@ -583,9 +380,8 @@ const Payable = ({ invoiceType }) => {
         <CTableDataCell></CTableDataCell>
         <CTableDataCell>
         <CButton color="#000F24" className='btnedit'>
-       
-       Assign
-       <FaEdit className='edticon'/>
+          Assign
+          <FaEdit className='edticon'/>
          </CButton>
         </CTableDataCell>
         <CTableDataCell>
@@ -613,24 +409,30 @@ const Payable = ({ invoiceType }) => {
           <CTableDataCell></CTableDataCell>
           <CTableDataCell>
             <CButton color="#000F24" className='btnedit' 
-            // onClick={() => this.toggleModal('jobNumber')}
+            onClick={() => toggleModal('jobNumber')}
             >
               Assign
               <FaEdit className='edticon'/>
             </CButton>
             <CModal visible={modalVisible === 'jobNumber'} 
-            // onClose={() => this.toggleModal('jobNumber')} 
+            onClose={() => toggleModal('jobNumber')} 
             className='tablemodalbox'
             >
               <CModalHeader>
-                <h5>Assign Job Number</h5>
+                <h5>All Accounts</h5>
               </CModalHeader>
               <CModalBody>
                 <CFormSelect>
-                  <option>Select an Account</option>
-                  <option value="1">Option 1</option>
-                  <option value="2">Option 2</option>
-                  <option value="3">Option 3</option>
+                <option>Select an Account</option>
+                {accounts.length > 0 ? (
+                  accounts.map(account => (
+                    <option key={account.AccountID} value={account.AccountID}>
+                      {account.Name}
+                    </option>
+                  ))
+                ) : (
+                  <option>Loading accounts...</option>
+                )}
                 </CFormSelect>
               </CModalBody>
             </CModal>
@@ -714,9 +516,8 @@ const Payable = ({ invoiceType }) => {
                             </Select>
                            </div>
                     </div>}
-          </div>
-          <div class='tab-section'>
-                           
+                  </div>
+                  <div class='tab-section'>               
                            <Tabs
                                value={value}
                               //  onChange={this.handleChange}
