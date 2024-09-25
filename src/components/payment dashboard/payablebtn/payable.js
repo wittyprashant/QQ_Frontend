@@ -42,7 +42,7 @@ const constructUrlWithParams = (baseUrl, params) => {
   return `${baseUrl}?${query}`;
 };
 
-const Payable = ({ invoiceType }) => {
+const Payable = ({ id, invoiceType }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [showError, setShowError] = useState(false);
@@ -102,6 +102,7 @@ const [modalVisible, setModalVisible] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [startDate, setStartDate] = useState(null);
+  const [transactionDetail, setTransactionDetail] = useState(null);
 
   const dropdownContent = (
     <div className='custom-dropdown-content'>
@@ -128,40 +129,46 @@ const [modalVisible, setModalVisible] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Fetch invoices
         const params = { invoice_type: 'ACCPAY' };
         const baseUrl = 'http://localhost:8080/api/v1/invoice/';
         const url = constructUrlWithParams(baseUrl, params);
-        const response = await axios.get(url);
+        const responseInvoices = await axios.get(url);
 
-        if (response.status === 200 && Array.isArray(response.data.data)) {
-          setTableData(response.data.data);
+        if (responseInvoices.status === 200 && Array.isArray(responseInvoices.data.data)) {
+          setTableData(responseInvoices.data.data);
         } else {
           setTableData([]);
         }
+
+        // Fetch transaction details
+        // const responseTransaction = await axios.get(`http://localhost:8080/api/v1/2.0/Invoices/${id}`);
+        // console.log("Transaction ID:", responseTransaction.data.data);
+        // if (responseTransaction.status === 200 && responseTransaction.data.data) {
+         
+        //   setTransactionDetail(responseTransaction.data.data); // Set transaction detail to local state
+        // } else {
+        //   setTransactionDetail(null); // Handle invalid response
+        // }
+
+        // Fetch accounts if modal is visible
+        if (modalVisible === 'jobNumber') {
+          const responseAccounts = await axios.get('http://localhost:8080/api/v1/account');
+          console.log('response: ', responseAccounts.data.data);
+          setAccounts(responseAccounts.data.data);
+        }
+
       } catch (error) {
         setShowError(true);
         setErrorMessage(error.message);
         setTableData([]);
       }
-
-      try {
-        if (modalVisible === 'jobNumber') {
-          axios.get('http://localhost:8080/api/v1/account/')
-            .then(response => {
-              console.log('response: ' + response);
-              setAccounts(response.data);
-            })
-            .catch(error => {
-              console.error('There was an error fetching the accounts!', error);
-            });
-        }
-      } catch(error) {
-        console.log('Error');
-      }
     };
 
     fetchData();
-  }, [invoiceType]);
+  }, [invoiceType, modalVisible, id,]);
+
+  
 
   const toggleModal = (modalName) => {
     if (modalVisible === modalName) {
@@ -170,11 +177,42 @@ const [modalVisible, setModalVisible] = useState(null);
       setModalVisible(modalName); 
     }
   };
-  const toggleCardVisibility = () => {
+  const toggleCardVisibility = async (id) => {
     setIsCardVisible(!isCardVisible);
 
-    setCardWidth(!isCardVisible ? '40%' : '0%');
-  };
+    setCardWidth(!isCardVisible ? '40%' : '0%');;
+      try {
+        const responseTransaction = await axios.get(`http://localhost:8080/api/v1/invoice/invoice-detail/${id}`);
+        if (responseTransaction.status === 200 && responseTransaction.data.data) {
+          console.log("Transaction ID:", id);
+          setTransactionDetail(responseTransaction.data.data);
+        } else {
+          setTransactionDetail(null);
+        }
+      } catch (error) {
+        console.error("Error fetching Invoice details:", error);
+      }
+    } 
+
+  // const toggleCardVisibility = async (id) => {
+  //   setIsCardVisible(!isCardVisible);
+
+  //   setCardWidth(!isCardVisible ? '40%' : '0%');
+  //   try {
+  //     const responseTransaction =  axios.get(`http://localhost:8080/api/v1/transaction/transaction-detail/${id}`);
+  //     if (responseTransaction.status === 200 && responseTransaction.data.data) {
+  //       console.log("Transaction ID:", id);
+  //       setTransactionDetail(responseTransaction.data.data);
+  //     } else {
+  //       setTransactionDetail(null);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching transaction details:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }
+  // };
 
   const toggleDropdown = () => {
     this.setState(prevState => ({
@@ -246,7 +284,7 @@ const [modalVisible, setModalVisible] = useState(null);
             <CButton
               onClick={(e) => {
                 e.preventDefault();
-                toggleCardVisibility(); // Toggle card visibility when "Details" is clicked
+                toggleCardVisibility(row.InvoiceID); // Toggle card visibility when "Details" is clicked
               }}
               style={{
                 background: 'none',
@@ -340,13 +378,29 @@ const [modalVisible, setModalVisible] = useState(null);
               <div class='text-img'>
               <img alt="left-arrow" src={leftarrow} class='arrow-img'/>
               </div>
-              <div>
-                  <p class='dollar-amt'>-$2,200.00</p>
-                  <p class='traction-text'>Transaction XXXXXX 2000444453531 Company</p>
-                  <p class='traction-text'>Thu 23 Sep 2022</p>
-                  <p class='sydtime-text'> 08:23 AM (SYD/MEL Time)</p>
-                  <p class='sydtime-text'>Receipt #: J000000000000</p>
+              {transactionDetail ? (
+                <>
+            <div>
+              <p className='dollar-amt'>-${transactionDetail.Total}</p>
+              <p className='traction-text'>{transactionDetail.InvoiceID} {transactionDetail.companyName}</p>
+              <p className='traction-text'>{transactionDetail.Date} </p>
+              <p className='sydtime-text'>{transactionDetail.Date} (SYD/MEL Time)</p>
+              <p className='sydtime-text'>Receipt #: {transactionDetail.receiptNumber}</p>
+            </div>
+            <div class='border-bottom'></div>
+              <div class='avatar-badge'>
+              <CAvatar src={avatar8} size="md" />
+  
+              <p class='dum-text'>{transactionDetail.Contact.Name}</p>
+              {/* <p class='reassign-text'>REASSIGN</p> */}
+              <div className='badge-ready'>
+                <CBadge color="success" shape="rounded-pill" style={{width:'120%'}} >READY</CBadge>
               </div>
+              </div> 
+             </>
+          ) : (
+            <p>No transaction details available.</p>
+          )}
               <div class='border-bottom'></div>
               <div class='avatar-badge'>
               <CAvatar src={avatar8} size="md" />
@@ -356,7 +410,7 @@ const [modalVisible, setModalVisible] = useState(null);
                 <CBadge color="success" shape="rounded-pill" style={{width:'120%'}} >READY</CBadge>
               </div>
               </div>           
-          <div >
+          <div>
            <p class='query-text'>Query Details</p>
            <CTable class="transcationtble">
       <CTableRow className='exptble'>

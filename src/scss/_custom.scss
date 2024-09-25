@@ -844,9 +844,11 @@ p.sydtime-text {
 p.dum-text {
     font-size: 10px;
     margin-top: 12px;
+    width: 100%;
+    margin-left: 8px;
 }
 .badge-ready {
-    margin-left: 205px;
+    margin-left: 15px;
     margin-top: 7px;
 }
 .tab-section {
@@ -940,10 +942,12 @@ p.exp-for-text {
     font-size: small;
     margin-top: 20px;
 }
-p.dumpy-text {
-    color: #8E8E8E;
-    font-size: 12px;
-    /* border-bottom: 1px solid black; */
+p.dum-text {
+    font-size: 13px;
+    margin-top: 12px;
+    width: 100%;
+    margin-left: 8px;
+    font-weight: 500;
 }
 button.btn-edt {
     background-color: #00C0F3;
@@ -1211,4 +1215,15 @@ input.paybledtpckr {
     width: 100%;
     border: none !important;
     outline: none !important;
+}
+p.compny-text {
+    margin-top: -20px;
+    font-size: 10px;
+    color: grey;
+    text-align: center;
+    /* margin-bottom: 7px; */
+}
+.border-bottom.fullbrder {
+    width: calc(100% + 32px);
+    margin-left: -16px;
 }

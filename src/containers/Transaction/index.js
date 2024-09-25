@@ -139,8 +139,6 @@ class Transaction extends Component {
       modalVisible: false,
       showDropdown: false,
       job: '',
-      transactionDetail: null,
-      selectedTransactionId: null,
       selectedButton: null,
       filterVisible: true,
       filterMarginLeft: '20px',
@@ -217,6 +215,7 @@ class Transaction extends Component {
                   onClick={(e) => {
                     e.preventDefault();
                     this.toggleVisibility([3, 4, 5], ['assignedTo', 'invoice', 'status'], '60%');
+                    this.fetchTransactionDetail(row.BankTransactionID); 
                   }}
                   style={{ background: 'none', border: 'none', padding: 0, fontSize: '12px', color: 'gray', cursor: 'pointer' }}
                 > Details </button>
@@ -253,6 +252,8 @@ class Transaction extends Component {
       selectedStatus:'',
       selectedType:'',
       startDate:null,
+      transactionDetail: null,
+      selectedTransactionId: null,
     };
     this.toggleModal = this.toggleModal.bind(this);
     this.toggleVisibility = this.toggleVisibility.bind(this);
@@ -314,60 +315,44 @@ class Transaction extends Component {
   handleDateChangeend = (date) => {
     this.setState({ endDate: date });
   };
-    toggleCardVisibility = ( cardWidth,columnsVisible) => {
-    
-     
-        this.toggleVisibilitycard([3,4,5],['assignedTo','invoice','status']);
-        //const { columnsVisible } = this.state;
-        const { filterVisible } = this.state;
-        this.setState((prevState) => ({
-          isCardclose: !prevState.isCardclose,
-          //columnsVisible: updatedColumnsVisible,
-          cardWidth: columnsVisible ? cardWidth : '100%',
-          filterVisible: filterVisible,
-          filterMarginRight: filterVisible ? '3%' : '0%', 
-        }));
-      };
+  toggleCardVisibility = (cardWidth, columnsVisible) => {
+    this.toggleVisibilitycard([3, 4, 5], ['assignedTo', 'invoice', 'status'], cardWidth); // Toggle specific columns
+  
+    const { filterVisible } = this.state;
+    this.setState((prevState) => ({
+      isCardclose: !prevState.isCardclose,
+      cardWidth: columnsVisible ? cardWidth : '100%',
+      filterVisible: filterVisible,
+      filterMarginRight: filterVisible ? '3%' : '0%',
+    }));
+  };
+  
       toggleModal = (id) => {
         this.setState((prevState) => ({
           modalVisible: prevState.modalVisible === id ? null : id, // Toggle the modal visibility
         }));
       };
-    
-      toggleVisibilitycard = (columnIndices, paragraphIds, cardWidth) => {
-        const { hiddenColumns, hiddenParagraphs, isCardVisible } = this.state;
-        let updatedHiddenColumns = [...hiddenColumns];
-        let updatedHiddenParagraphs = [...hiddenParagraphs];
-        let updatedCardVisibility = !isCardVisible;
+      toggleVisibilitycard = (cardWidth) => {
+        const { hiddenColumns, isCardVisible } = this.state;
       
-        // Toggle visibility for specified columns
-        columnIndices.forEach((columnIndex) => {
-          const columnIndexInHidden = updatedHiddenColumns.indexOf(columnIndex);
-          if (columnIndexInHidden !== -1) {
-            updatedHiddenColumns.splice(columnIndexInHidden, 1); // Column is visible, so remove from hiddenColumns
-          } else {
-            updatedHiddenColumns.push(columnIndex); // Column is hidden, so add to hiddenColumns
-          }
-        });
+        // Indices for Date, Description, and Amount columns
+        const visibleColumns = [0, 1, 2]; // Assuming 0, 1, 2 are the indices for Date, Description, and Amount columns
+        let updatedHiddenColumns = [];
       
-        // Toggle visibility for specified paragraphs
-        paragraphIds.forEach((paragraphId) => {
-          const paragraphIndex = updatedHiddenParagraphs.indexOf(paragraphId);
-          if (paragraphIndex !== -1) {
-            updatedHiddenParagraphs.splice(paragraphIndex, 1); // Paragraph is visible, so remove from hiddenParagraphs
-          } else {
-            updatedHiddenParagraphs.push(paragraphId); // Paragraph is hidden, so add to hiddenParagraphs
-          }
-        });
-      
-        // Set card width based on visibility state
-        const updatedCardWidth = updatedCardVisibility ? cardWidth : '100%';
+        if (!isCardVisible) {
+          // If the card is being opened, hide all columns except Date, Description, and Amount
+          updatedHiddenColumns = this.state.columnTransaction.map((col, index) => {
+            if (!visibleColumns.includes(index)) {
+              return index; // Add columns that should be hidden
+            }
+            return null;
+          }).filter(col => col !== null); // Filter out null values
+        }
       
         this.setState({
-          hiddenColumns: updatedHiddenColumns,
-          hiddenParagraphs: updatedHiddenParagraphs,
-          isCardVisible: updatedCardVisibility,
-          cardWidth: updatedCardWidth,
+          hiddenColumns: updatedHiddenColumns, // Update the hidden columns
+          isCardVisible: !isCardVisible, // Toggle card visibility
+          cardWidth: !isCardVisible ? cardWidth : '100%', // Adjust card width
         });
       };
       
@@ -405,26 +390,37 @@ class Transaction extends Component {
         };
         this.props.onTransactionList(param);
     
-      //   // Assuming the ID for detail fetch is obtained from somewhere in the component or props
-      //   const initialTransactionId = this.props.data && this.props.data[0]?._id;
-      //   if (initialTransactionId) {
-      //     this.fetchTransactionDetail(initialTransactionId);
-      //   }
       }
-     
-
-    fetchTransactionDetail = async (id) => {
-      try {
-        const response =  this.props.getransactionDetail(id); // Fixed method name
-        if (response && response.data) {
-          console.log('Response transactaion:', response.data);
-          this.setState({ transactionDetail: response.data });
+      formatTime = (timeString) => {
+        const date = new Date(`1970-01-01T${timeString}Z`); // Parse the time string
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Format it to HH:MM
+      };
+      formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month:'short', year: 'numeric' });
+      };
+      fetchTransactionDetail = async (id) => {
+        try {
+          const response = await this.props.getransactionDetail(id); // Await the API call
+          console.log('Full response:', response);                 // Full response
+          console.log('response.data:', response.data);            // response.data
+          console.log('response.data.data:', response.data.data);  // response.data.data
+      
+          if (response && response.data && response.data.data) {
+            const transactionData = response.data.data;  // Store the whole transaction data
+            console.log('Transaction Data:', transactionData);
+            
+            // Set the entire transaction data in state
+            this.setState({ transactionDetail: transactionData });
+          } else {
+            console.log('Response or response.data is undefined:', response);
+          }
+        } catch (error) {
+          console.error('Error fetching transaction details:', error);
         }
-      } catch (error) {
-        console.error('Error fetching transaction details:', error);
-      }
-    };
-    
+      };
+           
+      
     delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
     deleteTransaction(id) {
         swal({
@@ -477,7 +473,7 @@ class Transaction extends Component {
 
     render() {
         const { data,label } = this.props;
-        const { columnTransaction,hiddenColumns,isCardVisible,isCardclose,items,messages,newMessage,modalVisible,selectedStatus,transactionStatus,transactionType,selectedType,startDate,endDate } = this.state;
+        const { columnTransaction,hiddenColumns,isCardVisible,transactionDetail,isCardclose,items,messages,newMessage,modalVisible,selectedStatus,transactionStatus,transactionType,selectedType,startDate,endDate } = this.state;
         const { value,commentTextVisible,showDropdown,job,HistoryTextVisible,selectedButton,filterVisible, filterMarginRight  } = this.state;
      
 
@@ -566,6 +562,7 @@ class Transaction extends Component {
              
                  
 {isCardVisible && isCardclose && (
+  
                 <CCard className="card-right-side" style={{ width: '400px', position: 'absolute', top: '12%', right: '0' }}>
                     <CCardBody>
                         <div>
@@ -574,22 +571,32 @@ class Transaction extends Component {
                             <img src={leftarrow} class='arrow-img'/>
                             </div>
                            
-                            <div>
-                                <p class='dollar-amt'>-$2,200.00</p>
-                                <p class='traction-text'>Transaction XXXXXX 2000444453531 Company</p>
-                                <p class='traction-text'>Thu 23 Sep 2022</p>
-                                <p class='sydtime-text'> 08:23 AM (SYD/MEL Time)</p>
-                                <p class='sydtime-text'>Receipt #: J000000000000</p>
-                            </div>
-                            <div class='border-bottom'></div>
+                            {transactionDetail ? (
+                              
+                <>
+                
+                  <p className="dollar-amt">-${transactionDetail.Total}</p>
+                  <p className="traction-text">{transactionDetail.BankTransactionID} </p>
+                  <p className="compny-text">company:{transactionDetail.company}</p>
+                  <p className="traction-text">{this.formatDate(transactionDetail.Date)}</p>
+                  <p className="sydtime-text">{transactionDetail.Date}</p>
+                  <p className="sydtime-text">Receipt #: {transactionDetail.receiptNumber}</p>
+
+               
+                  <div class='border-bottom fullbrder'></div>
                             <div class='avatar-badge'>
                             <CAvatar src={avatar8} size="md" />
-                            <p class='dum-text'>Daniel K.</p>
+                            <p class='dum-text'>{transactionDetail.Contact.Name}</p>
                             {/* <p class='reassign-text'>REASSIGN</p> */}
                             <div className='badge-ready'>
                             <CBadge color="success" shape="rounded-pill" style={{width:'120%'}} >READY</CBadge>
                             </div>
                             </div>
+                </>
+              ) : (
+                <p>Loading...</p>
+              )}
+                           
                             
                          
           <div >
@@ -837,7 +844,8 @@ const mapStateToProps = state => {
         error: state.transaction.error,
         token: state.auth.token,
         transactionStatus: state.transactionStatus,
-        transactionType: state.transactionType
+        transactionType: state.transactionType,
+        transactionDetail: state.transaction.data, 
     }
 }
 
@@ -846,7 +854,7 @@ const mapDispatchToProp = dispatch => {
         onTransactionList: (param) => dispatch(actions.transactionList(param)),
         onTransactionFilterList: (text) => dispatch(actions.transactionListFilter(text)),
         onTransactionDelete: (id, token) => dispatch(actions.transactionDelete(id, token)),
-         getransactionDetail: (id,token) => dispatch(actions.gettransactionDetail(id,token))
+        getransactionDetail: (id,token) => dispatch(actions.gettransactionDetail(id,token))
     }
 }
 

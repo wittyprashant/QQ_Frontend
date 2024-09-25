@@ -1,6 +1,6 @@
 import * as actions from "./actionTypes";
 import axios from '../../axios_call'
-import { endPoint } from "../../components/frontend_api/API/constant_api";
+
 
 
 const transactionListStart = () => {
@@ -116,21 +116,24 @@ export const transactionDelete = (id,token) => {
 
 export const gettransactionDetail = (id) => {
     return dispatch => {
-      
-        axios.get(`http://localhost:8080/api/v1/transaction/transaction-detail/`+id)
+      return axios.get(`http://localhost:8080/api/v1/transaction/transaction-detail/${id}`)
         .then(response => {
-            if (response.status === 200) {
-                console.log("Transaction ID:", id);
-                dispatch(transactionDetail(response.data.data, ""));
-            } else {
-                dispatch(transactionDetail(null, "Invalid transaction detail"));
-            }
+          if (response.status === 200 && response.data) {
+            console.log("Transaction ID:", id);
+            dispatch(transactionDetail(response.data, "")); // Dispatch the data
+            return response; // Return the response for async handling
+          } else {
+            dispatch(transactionDetail(null, "Invalid transaction detail"));
+            return { data: null }; // Return something even in error cases
+          }
         })
         .catch(error => {
-            dispatch(transactionDetail(null, error.message));
+          dispatch(transactionDetail(null, error.message));
+          return { data: null }; // Return something even on error
         });
     };
-};
+  };
+  
 
 export const TransactionDetail = (id) => {
     return dispatch => {        
