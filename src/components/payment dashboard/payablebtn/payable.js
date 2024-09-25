@@ -390,8 +390,7 @@ const [modalVisible, setModalVisible] = useState(null);
             <div class='border-bottom'></div>
               <div class='avatar-badge'>
               <CAvatar src={avatar8} size="md" />
-  
-              <p class='dum-text'>{transactionDetail.Contact.Name}</p>
+              <p class='dum-text'>Daniel K.</p>
               {/* <p class='reassign-text'>REASSIGN</p> */}
               <div className='badge-ready'>
                 <CBadge color="success" shape="rounded-pill" style={{width:'120%'}} >READY</CBadge>
@@ -401,15 +400,8 @@ const [modalVisible, setModalVisible] = useState(null);
           ) : (
             <p>No transaction details available.</p>
           )}
-              <div class='border-bottom'></div>
-              <div class='avatar-badge'>
-              <CAvatar src={avatar8} size="md" />
-              <p class='dum-text'>Daniel K.</p>
-              {/* <p class='reassign-text'>REASSIGN</p> */}
-              <div className='badge-ready'>
-                <CBadge color="success" shape="rounded-pill" style={{width:'120%'}} >READY</CBadge>
-              </div>
-              </div>           
+   
+                         
           <div>
            <p class='query-text'>Query Details</p>
            <CTable class="transcationtble">
