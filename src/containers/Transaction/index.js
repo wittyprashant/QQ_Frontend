@@ -47,49 +47,18 @@ import leftarrow from './../../assets/Images/leftarrow.png';
  import edit  from './../../assets/Images/whiteedit.png';
 import Header from '../../components/partials/Header';
 import { FaCalendarAlt, FaEdit, FaRegQuestionCircle } from 'react-icons/fa';
+import axios from 'axios';
 
 
 
-const dropdownContent = (
-    <div className='custom-dropdown-content'>
-         <CRow>
-      <div class='logo-dropdown'>
-        <select
-          id="dropdown"
-          class='headertext-dropdown'
-         // value={this.state.selectedValue}
-         // onChange={this.handleChange}
-        >
-          <option value="">Select Bank Account</option>
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
-          <option value="option3">Option 3</option>
-        </select>
 
-       
-      </div>
-      </CRow>
-    </div>
-  );
  
 const historydata = [
     {
         EditBy:'Edited By Daniel K',
         date:' 20 Oct 2022',
     },
-    {
-        EditBy:'Edited By Daniel K',
-        date:' 20 Oct 2022',
-    },
-    {
-        EditBy:'Edited By Daniel K',
-        date:' 20 Oct 2022',
 
-    },
-    {
-        EditBy:'Edited By Daniel K',
-        date:' 20 Oct 2022',
-    }
 ]
 class Transaction extends Component {
     
@@ -98,19 +67,7 @@ class Transaction extends Component {
     handleChange = async (event, newValue) => {
         this.setState({ value: newValue });
 
-        // if (newValue === 1) {
-        //     this.setState({ detailsTextVisible: true, commentTextVisible: false, historyTextVisible: false });
-        //     try {
-        //         await this.props.getTransactionDetail('transaction-id');  // Replace 'transaction-id' with the actual ID
-        //         if (this.props.transactionDetail) {
-        //             this.setState({ items: this.props.transactionDetail, error: null });
-        //         } else {
-        //             this.setState({ error: "No transaction details available." });
-        //         }
-        //     } catch (error) {
-        //         this.setState({ error: error.message });
-        //     }
-        // } 
+       
        if (newValue === 1) {
             this.setState({ commentTextVisible: true, historyTextVisible: false });
         } else if (newValue === 2) {
@@ -232,11 +189,11 @@ class Transaction extends Component {
       modalVisible: null,
       isCardclose: true,
       cardWidth: '100%',
+      BankTranscationAccounts:[],
       columnsVisible: true,
       messages: [
         { id: 1, sender: 'Daniel K.', text: 'Duis congue velit elit, at accumsan nisi malesuada fermentum.', type: 'sent' },
         { id: 2, sender: 'Rachel L.', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. .', type: 'received' },
-        { id: 3, sender: 'Daniel K.', text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. .', type: 'sent' },
       ],
       newMessage: '',
       transactionStatus: [
@@ -254,6 +211,7 @@ class Transaction extends Component {
       startDate:null,
       transactionDetail: null,
       selectedTransactionId: null,
+        filterText: ''
     };
     this.toggleModal = this.toggleModal.bind(this);
     this.toggleVisibility = this.toggleVisibility.bind(this);
@@ -315,13 +273,14 @@ class Transaction extends Component {
   handleDateChangeend = (date) => {
     this.setState({ endDate: date });
   };
-  toggleCardVisibility = (cardWidth, columnsVisible) => {
-    this.toggleVisibilitycard([3, 4, 5], ['assignedTo', 'invoice', 'status'], cardWidth); // Toggle specific columns
+  toggleCardVisibility = (cardWidth) => {
+    // Hide columns 3, 4, 5 and adjust card width
+    this.toggleVisibilitycard([3, 4, 5], cardWidth); 
   
     const { filterVisible } = this.state;
     this.setState((prevState) => ({
       isCardclose: !prevState.isCardclose,
-      cardWidth: columnsVisible ? cardWidth : '100%',
+      cardWidth: prevState.isCardclose ? '100%' : cardWidth, // Toggle between full and custom width
       filterVisible: filterVisible,
       filterMarginRight: filterVisible ? '3%' : '0%',
     }));
@@ -332,27 +291,28 @@ class Transaction extends Component {
           modalVisible: prevState.modalVisible === id ? null : id, // Toggle the modal visibility
         }));
       };
-      toggleVisibilitycard = (cardWidth) => {
+      toggleVisibilitycard = (columnIndices, cardWidth) => {
         const { hiddenColumns, isCardVisible } = this.state;
+        let updatedHiddenColumns = [...hiddenColumns];
+        let updatedCardVisibility = !isCardVisible;
       
-        // Indices for Date, Description, and Amount columns
-        const visibleColumns = [0, 1, 2]; // Assuming 0, 1, 2 are the indices for Date, Description, and Amount columns
-        let updatedHiddenColumns = [];
+        // Toggle visibility for specified columns
+        columnIndices.forEach((columnIndex) => {
+          const columnIndexInHidden = updatedHiddenColumns.indexOf(columnIndex);
+          if (columnIndexInHidden !== -1) {
+            updatedHiddenColumns.splice(columnIndexInHidden, 1); // Remove from hidden columns (make visible)
+          } else {
+            updatedHiddenColumns.push(columnIndex); // Add to hidden columns (hide)
+          }
+        });
       
-        if (!isCardVisible) {
-          // If the card is being opened, hide all columns except Date, Description, and Amount
-          updatedHiddenColumns = this.state.columnTransaction.map((col, index) => {
-            if (!visibleColumns.includes(index)) {
-              return index; // Add columns that should be hidden
-            }
-            return null;
-          }).filter(col => col !== null); // Filter out null values
-        }
+        // Set card width based on visibility state
+        const updatedCardWidth = updatedCardVisibility ? cardWidth : '100%';
       
         this.setState({
-          hiddenColumns: updatedHiddenColumns, // Update the hidden columns
-          isCardVisible: !isCardVisible, // Toggle card visibility
-          cardWidth: !isCardVisible ? cardWidth : '100%', // Adjust card width
+          hiddenColumns: updatedHiddenColumns,
+          isCardVisible: updatedCardVisibility,
+          cardWidth: updatedCardWidth,
         });
       };
       
@@ -381,16 +341,31 @@ class Transaction extends Component {
         cardWidth: !isCardVisible ? cardWidth : '100%', // Set the width to 100% or the provided width
     });
 };
-      
-  
+
     componentDidMount() {
         const param = {
           order: 2,
           page: 1,
         };
         this.props.onTransactionList(param);
+        this.BankAccountTransactionDetails();
+
     
       }
+      BankAccountTransactionDetails() {
+        axios.get('http://localhost:8080/api/v1/transaction/bankDetails')
+          .then(response => {
+            const transactionDatabank = response.data.data;
+            console.log('API Response Data:', transactionDatabank);
+            
+            // Ensure the state is updated properly
+            this.setState({ BankTranscationAccounts: transactionDatabank }, () => {
+              console.log('Updated Bank Transaction Accounts:', this.state.BankTranscationAccounts);
+            });
+          })
+          .catch(error => console.log('Error fetching bank transaction details:', error));
+      }
+      
       formatTime = (timeString) => {
         const date = new Date(`1970-01-01T${timeString}Z`); // Parse the time string
         return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); // Format it to HH:MM
@@ -402,15 +377,9 @@ class Transaction extends Component {
       fetchTransactionDetail = async (id) => {
         try {
           const response = await this.props.getransactionDetail(id); // Await the API call
-          console.log('Full response:', response);                 // Full response
-          console.log('response.data:', response.data);            // response.data
-          console.log('response.data.data:', response.data.data);  // response.data.data
-      
           if (response && response.data && response.data.data) {
             const transactionData = response.data.data;  // Store the whole transaction data
-            console.log('Transaction Data:', transactionData);
-            
-            // Set the entire transaction data in state
+           
             this.setState({ transactionDetail: transactionData });
           } else {
             console.log('Response or response.data is undefined:', response);
@@ -447,47 +416,65 @@ class Transaction extends Component {
                 }
             });
     }
-
-    getSubHeaderComponent = () => {
-        return (
-            
-            <CRow className="mb-3">
-                
-                <CCol sm={12}>
-                    <CFormInput
-                        onChange={(e) => {
-                            let newFilterText = e.target.value;
-                            this.setState({ filterText: newFilterText });
-                            this.props.onTransactionFilterList(newFilterText);
-                        }}
-                        className='inputsearch'
-                        value={this.state.filterText}
-                        size="sm"
-                        placeholder="Search..."
-                    />
-                </CCol>
-              
-            </CRow>
-        );
-    };
+ 
+  
 
     render() {
         const { data,label } = this.props;
-        const { columnTransaction,hiddenColumns,isCardVisible,transactionDetail,isCardclose,items,messages,newMessage,modalVisible,selectedStatus,transactionStatus,transactionType,selectedType,startDate,endDate } = this.state;
+        const { columnTransaction,hiddenColumns,isCardVisible,transactionDetail,BankTranscationAccounts,isCardclose,items,messages,newMessage,modalVisible,selectedStatus,transactionStatus,transactionType,selectedType,startDate,endDate } = this.state;
         const { value,commentTextVisible,showDropdown,job,HistoryTextVisible,selectedButton,filterVisible, filterMarginRight  } = this.state;
      
-
+        const filteredData = this.state.filterText ? data.filter(item => {
+          const idMatch = item.bankTransactionID !== undefined && 
+                          item.bankTransactionID.toString().includes(this.state.filterText);
+          const statusMatch = item.Status && 
+                              item.Status.toLowerCase().includes(this.state.filterText.toLowerCase());
+  
+          return idMatch || statusMatch; // Return true if either matches
+      }) : data; // If filterText is empty, show all data
+      
        
         return (
             
          <div>
             <div class='header-dropdown'>
-            <Header headerText='Transactions' dropdownContent={dropdownContent} />
+            <Header headerText='Transactions' dropdownContent={<div className='custom-dropdown-content'>
+    <CRow>
+      <div className='logo-dropdown'>
+      <CFormSelect>
+      <option>Select a Bank Account</option>
+      {BankTranscationAccounts && BankTranscationAccounts.length > 0 ? (
+       BankTranscationAccounts.map(account => (
+          <option key={account.AccountID} value={account.AccountID}>
+            {account.Name}
+          </option>
+        ))
+      ) : (
+        <option>Loading accounts...</option>
+      )}
+    </CFormSelect>
+      </div>
+    </CRow>
+  </div>} />
    
             </div>
             
             <div class='search-section'>
-                 {this.getSubHeaderComponent()}
+                 {<CRow className="mb-3">
+              <CCol sm={12}>
+                  <CFormInput
+                      onChange={(e) => {
+                          let newFilterText = e.target.value;
+                          this.setState({ filterText: newFilterText });
+                          this.props.onTransactionFilterList(newFilterText); // This can be used to call an API or filter data in parent component
+                      }}
+                      className='inputsearch'
+                      value={this.state.filterText}
+                      size="sm"
+                      placeholder="Search..."
+                  />
+              </CCol>
+          </CRow>}
               
                  {filterVisible && (
                  <div class='filter-section'  style={{ marginRight: filterMarginRight}} onClick={() => this.toggleModal('filter')}>
@@ -544,19 +531,20 @@ class Transaction extends Component {
   </CModalFooter>
             </CModal>
             <DataTable
-            columns={this.state.columnTransaction}
-            data={this.props.data}
-            defaultSortFieldId={5}
-            defaultSortAsc={false}
-            progressPending={this.props.loading}
-            pagination
-            paginationResetDefaultPage={this.state.resetPaginationToggle}
-            className='trasaction_data_table'
-            onChangePage={this.handlePageChange}
-            theme="solarized"
-            striped
-            style={{ width: this.state.cardWidth }} // Adjust the table width dynamically
+                columns={this.state.columnTransaction}
+                data={filteredData} // Use the filtered data here
+                defaultSortFieldId={5}
+                defaultSortAsc={false}
+                progressPending={this.props.loading}
+                pagination
+                paginationResetDefaultPage={this.state.resetPaginationToggle}
+                className='trasaction_data_table'
+                onChangePage={this.handlePageChange}
+                theme="solarized"
+                striped
+                style={{ width: this.state.cardWidth }} // Adjust the table width dynamically
             />
+       
 
                
              
@@ -808,7 +796,7 @@ class Transaction extends Component {
                  </div>:''
                    
                    }
-        {!HistoryTextVisible?'':
+        {HistoryTextVisible?'':
         <div class='history section'>
              <CTable className="rotate-table">
            <CTableHead>
@@ -845,7 +833,9 @@ const mapStateToProps = state => {
         token: state.auth.token,
         transactionStatus: state.transactionStatus,
         transactionType: state.transactionType,
-        transactionDetail: state.transaction.data, 
+        transactionDetail: state.transaction.data,
+    
+        
     }
 }
 
@@ -854,7 +844,8 @@ const mapDispatchToProp = dispatch => {
         onTransactionList: (param) => dispatch(actions.transactionList(param)),
         onTransactionFilterList: (text) => dispatch(actions.transactionListFilter(text)),
         onTransactionDelete: (id, token) => dispatch(actions.transactionDelete(id, token)),
-        getransactionDetail: (id,token) => dispatch(actions.gettransactionDetail(id,token))
+        getransactionDetail: (id,token) => dispatch(actions.gettransactionDetail(id,token)),
+        // getBankAccountDetails:() => dispatch(actions.getBankAccountDeatils())
     }
 }
 

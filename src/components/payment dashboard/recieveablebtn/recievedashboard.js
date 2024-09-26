@@ -16,11 +16,15 @@ const constructUrlWithParams = (baseUrl, params) => {
   return `${baseUrl}?${query}`;
 };
 
-const Recievables = ({ invoiceType }) => {
+const Recievables = ({ invoiceType,data }) => {
   const [tableData, setTableData] = useState([]);
   const [showError, setShowError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [filterText, setFilterText] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState("ALL"); // Initialize filterText state with useState
 
+  // Function to filter table data based on the search input
+ 
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -114,16 +118,29 @@ const Recievables = ({ invoiceType }) => {
     return {}; // Default style if no conditions are met
   };
 
-  const filterTableData = (Status) => {
-    if (!Array.isArray(tableData)) {
-      return []; // Return empty array if tableData is not an array
+  const filterTableData = (data, Status, filterText) => {
+    if (!Array.isArray(data)) {
+      console.warn("Data is not an array:", data);
+      return []; // Return empty array if data is not an array
     }
-    if (Status === "ALL") {
-      return tableData;
-    }
-    return tableData.filter(row => row.Status === Status);
-  }
-
+    
+    // Filter based on Status first
+    let filteredData = Status === "ALL" ? data : data.filter(row => row.Status === Status);
+    
+    // Then filter based on filterText
+    return filteredData.filter((item) => {
+      const invoiceNumber = item.InvoiceNumber || ""; // Default to empty string if undefined
+      const Ref = item.Reference || "";
+      const status =item.Status || ""; // Default to empty string if undefined
+      
+      return (
+        invoiceNumber.toLowerCase().includes(filterText.toLowerCase()) ||
+       Ref.toLowerCase().includes(filterText.toLowerCase()) ||
+       status.toLowerCase().includes(filterText.toLowerCase())
+      );
+    });
+  };
+  
   return (
     <div className='Payable'>
      <CCard class='card card-payable'>
@@ -179,27 +196,23 @@ const Recievables = ({ invoiceType }) => {
             <CCard>
             <CCol >
      
-     <CFormInput
-         // onChange={(e) => {
-         //     let newFilterText = e.target.value;
-         //     this.setState({ filterText: newFilterText });
-         //     this.props.onTransactionFilterList(newFilterText);
-         // }}
-         // value={this.state.filterText}
-         icon={cilSearch}
-         size="sm"
-         class='searchinputform'
-         placeholder="Search..."
-     />
+            <CFormInput
+          onChange={(e) => setFilterText(e.target.value)}  // Update filterText when input changes
+          value={filterText}  // Bind input value to filterText state
+          icon={cilSearch}
+          size="sm"
+          className="searchinputform"  // Use className in JSX
+          placeholder="Search..."
+        />
  </CCol>
-
  <DataTable
-                columns={columns}
-                data={filterTableData("ALL")}
-                defaultSortField="InvoiceNumber"
-                pagination
-                highlightOnHover
-              />
+        columns={columns}
+        data={filterTableData(tableData, selectedStatus, filterText)}  // Pass the filtered data to DataTable
+        defaultSortField="InvoiceNumber"
+        pagination
+        highlightOnHover
+      />
+
             </CCard>
           </Tab>
           <Tab eventKey="Awaiting Approval" title="Awaiting Approval">

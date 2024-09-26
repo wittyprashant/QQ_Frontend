@@ -51,17 +51,15 @@ const Payable = ({ id, invoiceType }) => {
   const [isCardVisible, setIsCardVisible] = useState(false);
   const [hiddenParagraphs, setHiddenParagraphs] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [isCardclose, setIsCardClose] = useState(true);
   const [cardWidth, setCardWidth] = useState('100%');
   const [columnsVisible, setColumnsVisible] = useState(true);
   const [value, setValue] = useState(0);
-  const [detailsTextVisible, setDetailsTextVisible] = useState(false);
   const [commentTextVisible, setCommentTextVisible] = useState(false);
   const [job, setJob] = useState('');
   const [HistoryTextVisible, setHistoryTextVisible] = useState(false);
   const [selectedButton, setSelectedButton] = useState(null);
   const [accounts, setAccounts] = useState([]);
+
 
   const historydata = [
     {
@@ -141,17 +139,7 @@ const [modalVisible, setModalVisible] = useState(null);
           setTableData([]);
         }
 
-        // Fetch transaction details
-        // const responseTransaction = await axios.get(`http://localhost:8080/api/v1/2.0/Invoices/${id}`);
-        // console.log("Transaction ID:", responseTransaction.data.data);
-        // if (responseTransaction.status === 200 && responseTransaction.data.data) {
-         
-        //   setTransactionDetail(responseTransaction.data.data); // Set transaction detail to local state
-        // } else {
-        //   setTransactionDetail(null); // Handle invalid response
-        // }
-
-        // Fetch accounts if modal is visible
+      
         if (modalVisible === 'jobNumber') {
           const responseAccounts = await axios.get('http://localhost:8080/api/v1/account');
           console.log('response: ', responseAccounts.data.data);
@@ -194,32 +182,34 @@ const [modalVisible, setModalVisible] = useState(null);
       }
     } 
 
-  // const toggleCardVisibility = async (id) => {
-  //   setIsCardVisible(!isCardVisible);
+  
+  
+  const handleChange = async (newValue) => {
+    setValue(newValue);
 
-  //   setCardWidth(!isCardVisible ? '40%' : '0%');
-  //   try {
-  //     const responseTransaction =  axios.get(`http://localhost:8080/api/v1/transaction/transaction-detail/${id}`);
-  //     if (responseTransaction.status === 200 && responseTransaction.data.data) {
-  //       console.log("Transaction ID:", id);
-  //       setTransactionDetail(responseTransaction.data.data);
-  //     } else {
-  //       setTransactionDetail(null);
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching transaction details:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
-  // };
+    if (newValue === 1) {
+        setCommentTextVisible(true);
+        setHistoryTextVisible(false);
+    } else if (newValue === 2) {
+        setHistoryTextVisible(true);
+        setCommentTextVisible(false);
+    }
+};
 
+const handleButtonClick = (button) => {
+  setSelectedButton(button);
+};
   const toggleDropdown = () => {
     this.setState(prevState => ({
       showDropdown: !prevState.showDropdown,
     }));
   };
-
+  const handleSendMessage = () => {
+    if (newMessage.trim()) {
+      setMessages([...messages, { id: Date.now(), text: newMessage, type: 'sent', sender: 'You' }]);
+      setNewMessage('');
+    }
+  };
   const columns = [
     {
       name: 'Invoice Number',
@@ -473,7 +463,7 @@ const [modalVisible, setModalVisible] = useState(null);
                 {accounts.length > 0 ? (
                   accounts.map(account => (
                     <option key={account.AccountID} value={account.AccountID}>
-                      {account.Name}
+                     {account.Code} - {account.Name}
                     </option>
                   ))
                 ) : (
@@ -563,114 +553,99 @@ const [modalVisible, setModalVisible] = useState(null);
                            </div>
                     </div>}
                   </div>
-                  <div class='tab-section'>               
-                           <Tabs
-                               value={value}
-                              //  onChange={this.handleChange}
-                              class='Tab-bar'
-                              style={{height:'40px'}}
-                              TabIndicatorProps={{ style: { background: 'transparent' } }}
-                               //aria-label="scrollable force tabs example"
-                           >
-                             
-                               <Tab label="Comments"  iconPosition='start' icon={<HistoryIcon/>}  style={{height:'40px',fontSize:'12px', paddingleft: '22px'}} className="transction-tab-button" select={selectedButton === 'button2' ? 'selected' : ''} onClick={() => this.handleButtonClick('button2')}/>
-                               <Tab label="History" iconPosition='start' icon={<HistoryIcon/>}    style={{height:'40px',fontSize:'12px',paddingleft: '30px'}} className="transction-tab-button" select={selectedButton === 'button3' ? 'selected' : ''} onClick={() => this.handleButtonClick('button3')} />
-                              
-                           </Tabs> 
- 
-                   </div>
-                   { commentTextVisible ? <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-                   <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}>
-                      {messages.map((msg) => (
-                       <div
-                         key={msg.id}
-                         style={{
-                           alignSelf: msg.type === 'sent' ? 'flex-end' : 'flex-start',
-                           background: msg.type === 'sent' ? '#00aaff' : '#e0e0e0',
-                           color: msg.type === 'sent' ? '#fff' : '#000',
-                           borderRadius: '10px',
-                           padding: '10px',
-                           marginBottom: '10px',
-                           maxWidth: '80%',
-                         }}
-                       >
-                         <div>{msg.text}</div>
-                         <div style={{ fontSize: '0.8em', textAlign: 'right', marginTop: '5px' }}>{msg.sender}</div>
-                       </div>
-                      ))}
-                   </div>
-                   <div style={{ display: 'flex', alignItems: 'center' }}>
-                     <input
-                       type="text"
-                       value={newMessage}
-                       onChange={this.handleChanged}
-                       placeholder="Textbox"
-                       style={{ flex: 1, padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
-                     />
-                      <button
-                       onClick={this.handleSendMessage}
-                       style={{
-                        color:'#00C0F3',
-                         border: 'none',
-                            right:'45px',
-                           marginTop:'1px',
-                         position:'absolute'
-                       }}
-                      >
-                     <CIcon icon={cilSend}/>
-                     </button>
-                   </div>
-                 </div>:''
-                   
-                  }
-        {!HistoryTextVisible?'':
-        <div class='history section'>
-             <CTable className="rotate-table">
-           <CTableHead>
-      {historydata.map((item, index) => (
-        <CTableRow key={index} >
-         
-          <CTableHeaderCell class='querytable-text'>{item.EditBy}</CTableHeaderCell>
-          <CTableHeaderCell class='valuetable-text'>{item.date}</CTableHeaderCell>
-         
-        </CTableRow>
-      ))}
-        </CTableHead>
-       
-    </CTable>
-    
-        </div>
-        }
+                  <div className="tab-section">
+      <Tabs
+        value={value}
+        onChange={handleChange}
+        className="Tab-bar"
+        style={{ height: '40px' }}
+        TabIndicatorProps={{ style: { background: 'transparent' } }}
+      >
+        <Tab
+          label="Comments"
+          iconPosition="start"
+          icon={<HistoryIcon />}
+          style={{ height: '40px', fontSize: '12px', paddingLeft: '22px' }}
+          className="transction-tab-button"
+          selected={selectedButton === 'button2' ? 'selected' : ''}
+          onClick={() => handleButtonClick('button2')}
+        />
+        <Tab
+          label="History"
+          iconPosition="start"
+          icon={<HistoryIcon />}
+          style={{ height: '40px', fontSize: '12px', paddingLeft: '30px' }}
+          className="transction-tab-button"
+          selected={selectedButton === 'button3' ? 'selected' : ''}
+          onClick={() => handleButtonClick('button3')}
+        />
+      </Tabs>
+      
 
-<p class='dumpy-text'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam condimentum congue leo, ac gravida magna fermentum a. Duis congue velit elit, at accumsan nisi malesuada fermentum. </p>
-            <div class='border-bottom'></div>
-            <div class='buton-edit'>
-                {/* <img src={edit} class='edit-icon' style={{width:'25px', height: '17px'}}/> */}
-                <button class='btn-edt' 
-                // onClick={this.toggleDropdown}
-                >Record Transaction</button>
-                </div>
-                {!showDropdown ? '' : <div >
-                    <p class='what-you-want'>Select what you want to do</p>
-                    <div  class='select-dropdown'>
-                        <Select
-                        value={job}
-                        className='edit-select-box'
-                        onChange={this.handledropdown}
-                        displayEmpty
-                        
-                        >
-                        <MenuItem value="">
-                        <em>Select Account</em>
-                        </MenuItem>
-                        <MenuItem value={10}>Assign Job Number</MenuItem>
-                        <MenuItem value={20}>Assign GST Code</MenuItem>
-                        <MenuItem value={30}>Assign Account Number</MenuItem>
-                        <MenuItem value={40}>Record Transaction</MenuItem>
-                        </Select>
-                        </div>
-                       
-                    </div>}
+      {commentTextVisible && (
+        <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px' }}>
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                style={{
+                  alignSelf: msg.type === 'sent' ? 'flex-end' : 'flex-start',
+                  background: msg.type === 'sent' ? '#00aaff' : '#e0e0e0',
+                  color: msg.type === 'sent' ? '#fff' : '#000',
+                  borderRadius: '10px',
+                  padding: '10px',
+                  marginBottom: '10px',
+                  maxWidth: '80%',
+                }}
+              >
+                <div>{msg.text}</div>
+                <div style={{ fontSize: '0.8em', textAlign: 'right', marginTop: '5px' }}>{msg.sender}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Textbox"
+              style={{ flex: 1, padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+            />
+            <button
+              onClick={handleSendMessage}
+              style={{
+                color: '#00C0F3',
+                border: 'none',
+                right: '45px',
+                marginTop: '1px',
+                position: 'absolute',
+              }}
+            >
+              <CIcon icon={cilSend} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {HistoryTextVisible && (
+        <div className="history-section">
+          <CTable className="rotate-table">
+            <CTableHead>
+              {historydata.map((item, index) => (
+                <CTableRow key={index}>
+                  <CTableHeaderCell className="querytable-text">{item.EditBy}</CTableHeaderCell>
+                  <CTableHeaderCell className="valuetable-text">{item.date}</CTableHeaderCell>
+                </CTableRow>
+              ))}
+            </CTableHead>
+          </CTable>
+        </div>
+      )}
+    </div>
+
+{/* <p class='dumpy-text'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam condimentum congue leo, ac gravida magna fermentum a. Duis congue velit elit, at accumsan nisi malesuada fermentum. </p> */}
+         
+            
                         </div>
           </CCardBody>
         </CCard>

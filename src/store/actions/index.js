@@ -93,7 +93,8 @@ export {
 	transactionAddEdit,
 	addEditTransactionErrorNull,
 	transactionListFilter,
-	TransactionDetail
+	TransactionDetail,
+	
 } from "./transaction"
 
 export { 

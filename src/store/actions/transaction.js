@@ -133,7 +133,25 @@ export const gettransactionDetail = (id) => {
         });
     };
   };
-  
+//   export const getBankAccountDeatils = () => {
+//     return dispatch => {
+//       return axios.get(`http://localhost:8080/api/v1/transaction/bankDetails`)
+//         .then(response => {
+//           if (response.status === 200 && response.data) {
+//             console.log("Transaction IDreposnse:",response.data);
+//             dispatch(transactionDetail(response.data, "")); // Dispatch the data
+//             return response; // Return the response for async handling
+//           } else {
+//             dispatch(transactionDetail(null, "Invalid transaction detail"));
+//             return { data: null }; // Return something even in error cases
+//           }
+//         })
+//         .catch(error => {
+//           dispatch(transactionDetail(null, error.message));
+//           return { data: null }; // Return something even on error
+//         });
+//     };
+//   };
 
 export const TransactionDetail = (id) => {
     return dispatch => {        

@@ -398,6 +398,13 @@ input.searchinputform {
     margin-left: 20px;
     padding-left: 20px;
    height:'50%';
+   width: 200px;
+  
+}
+
+input.searchinputform:focus {
+   border-color: unset;
+   box-shadow: none;
 }
 //bill css
 .bill-section {
