@@ -1,7 +1,8 @@
 import * as actions from './actionTypes';
 import axios from '../../axios_call';
 import Moment from 'moment';
-import { endPoint } from '../../components/frontend_api/API/constant_api';
+import { endPoint } from '../../components/constant_api';
+
 
 export const authStart = () => ({
     type: actions.AUTH_START,
@@ -124,7 +125,7 @@ export const userChangePassword = (id, password, confirm_password) => {
     return (dispatch) => {
         dispatch(authStart());
 
-        return axios.post('http://localhost:8080/api/v1/user/change_password/${id}', {
+        return axios.post(`http://localhost:8080/api/v1/user/change_password/${id}`, {
             password: password,
             confirm_password: confirm_password
         })

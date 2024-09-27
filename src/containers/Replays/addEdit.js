@@ -65,7 +65,6 @@ class AddEdit extends Component {
             validated: true
         })
         if (form.checkValidity() === true) {
-            console.log("submit");
             this.props.onAddEditForm(this.state, "")
         }
     }

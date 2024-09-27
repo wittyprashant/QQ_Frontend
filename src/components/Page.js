@@ -1,13 +1,11 @@
-import React, { Suspense } from 'react'
-import { Navigate, Route, Routes } from 'react-router-dom'
-import { CContainer, CSpinner } from '@coreui/react'
-
-// routes config
-import routes from '../route/routes'
+import React, { Suspense } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { CContainer, CSpinner } from "@coreui/react";
+import routes from "../route/routes";
 
 const Page = () => {
   return (
-    <CContainer lg className='px-0'>
+    <CContainer lg className="px-0">
       <Suspense fallback={<CSpinner color="primary" />}>
         <Routes>
           {routes.map((route, idx) => {
@@ -21,13 +19,13 @@ const Page = () => {
                   element={<route.element />}
                 />
               )
-            )
+            );
           })}
           <Route path="/" element={<Navigate to="dashboard" replace />} />
         </Routes>
       </Suspense>
     </CContainer>
-  )
-}
+  );
+};
 
-export default React.memo(Page)
+export default React.memo(Page);

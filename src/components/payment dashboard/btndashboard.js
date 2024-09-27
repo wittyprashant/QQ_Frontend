@@ -1,13 +1,12 @@
-import { CContainer, CRow } from '@coreui/react';
-import React, { useState } from 'react';
-import Summary from './summarybtn/summarycard';
-import { Color } from '../constant/color';
-import Payable from './payablebtn/payable';
-import Recievables from './recieveablebtn/recievedashboard';
-import Header from '../partials/Header';
+import { CContainer, CRow } from "@coreui/react";
+import React, { useState } from "react";
+import Summary from "./summarybtn/summarycard";
+import { Color } from "../constant/color";
+import Payable from "./payablebtn/payable";
+import Recievables from "./recieveablebtn/recievedashboard";
+import Header from "../partials/Header";
 
 function Btndashboard() {
-  // Initialize state to open the "Summary" section by default
   const [buttonColor, setButtonColor] = useState(true);
   const [buttonbg, setbuttonbg] = useState(true);
   const [summarytext, setsummarytext] = useState(true);
@@ -19,7 +18,6 @@ function Btndashboard() {
   const [recievetext, setreceivetext] = useState(false);
 
   const handleButtonClick = () => {
-    // Open "Summary" and close others
     setButtonColor(true);
     setbuttonbg(true);
     setsummarytext(true);
@@ -32,7 +30,6 @@ function Btndashboard() {
   };
 
   const handlepayButtonClick = () => {
-    // Open "Payables" and close others
     setpayColor(true);
     setpayablebg(true);
     setButtonColor(false);
@@ -59,45 +56,50 @@ function Btndashboard() {
 
   return (
     <CContainer>
-      <Header headerText='Payment Dashboard' />
+      <Header headerText="Payment Dashboard" />
       <CRow>
-        <div className='btn-color'>
+        <div className="btn-color">
           <button
-            style={{ color: buttonColor ? Color.white : Color.grey, backgroundColor: buttonbg ? Color.themeSelectedColor : '' }}
+            style={{
+              color: buttonColor ? Color.white : Color.grey,
+              backgroundColor: buttonbg ? Color.themeSelectedColor : "",
+            }}
             onClick={handleButtonClick}
-            className='btnclick'
+            className="btnclick"
           >
             SUMMARY
           </button>
           <button
-            style={{ color: payColor ? Color.white : Color.grey, backgroundColor: !payablebg ? '' : Color.themeSelectedColor }}
+            style={{
+              color: payColor ? Color.white : Color.grey,
+              backgroundColor: !payablebg ? "" : Color.themeSelectedColor,
+            }}
             onClick={handlepayButtonClick}
-            className='payablebtn'
+            className="payablebtn"
           >
             PAYABLES
           </button>
           <button
-            style={{ color: receiveColor ? Color.white : Color.grey, backgroundColor: !receivebg ? '' : Color.themeSelectedColor }}
+            style={{
+              color: receiveColor ? Color.white : Color.grey,
+              backgroundColor: !receivebg ? "" : Color.themeSelectedColor,
+            }}
             onClick={handlereceiveButtonClick}
-            className='receivebtn'
+            className="receivebtn"
           >
             RECEIVABLES
           </button>
         </div>
         <CContainer>
           <CRow>
-            <div className='summary-text'>
-              {summarytext ? <Summary /> : ''}
-            </div>
+            <div className="summary-text">{summarytext ? <Summary /> : ""}</div>
           </CRow>
           <CRow>
-            <div className='Pay-text'>
-              {payabletext ? <Payable /> : ''}
-            </div>
+            <div className="Pay-text">{payabletext ? <Payable /> : ""}</div>
           </CRow>
           <CRow>
-            <div className='receive-text'>
-              {recievetext ? <Recievables /> : ''}
+            <div className="receive-text">
+              {recievetext ? <Recievables /> : ""}
             </div>
           </CRow>
         </CContainer>

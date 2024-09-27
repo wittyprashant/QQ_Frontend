@@ -1,8 +1,6 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom'
-
-import routes from '../../route/routes'
-
+// import { useLocation } from 'react-router-dom'
+// import routes from '../../route/routes'
 //import { CBreadcrumb, CBreadcrumbItem } from '@coreui/react'
 
 /* const Breadcrumb = () => {

@@ -143,9 +143,6 @@ class UserRequestList extends Component {
     handleSubmit = async (event) => {
         event.preventDefault()
         const form = event.currentTarget
-
-        console.log("submit");
-
         if (form.checkValidity() === false) {
             event.stopPropagation();
         }

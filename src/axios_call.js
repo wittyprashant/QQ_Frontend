@@ -11,7 +11,6 @@ const AxiosInterceptor = ({ children }) => {
     
     useEffect(() => {
         const resInterceptor = response => {
-            console.log('Response:', response); // Debug information
             return response;
         };
 
@@ -19,9 +18,8 @@ const AxiosInterceptor = ({ children }) => {
             if (error.response && error.response.status === 401) {
                 localStorage.clear();
                 navigate('/login');
-                console.log("login redirect");
             }
-            console.error('Error:', error); // Debug information
+            console.error('Error:', error);
             return Promise.reject(error);
         };
 
@@ -37,7 +35,6 @@ instance.interceptors.request.use(function (config) {
     const userDetail = localStorage.getItem('userDetail');
     const token = userDetail ? JSON.parse(userDetail)._id : '';
     config.headers.Authorization = token ? `Bearer ${token}` : '';
-    console.log('Request Config:', config); // Debug information
     return config;
 });
 

@@ -56,8 +56,6 @@ class AddEdit extends Component {
         event.preventDefault()
         const form = event.currentTarget
 
-        console.log("submit");
-
         if (form.checkValidity() === false) {
             event.stopPropagation();
         }
@@ -66,8 +64,6 @@ class AddEdit extends Component {
             validated: true
         })
         if (form.checkValidity() === true) {
-            console.log("submit");
-            console.log("state", this.state)
             this.props.onAddEditForm(this.state)
         }
     }
@@ -123,11 +119,6 @@ class AddEdit extends Component {
                 planId: userDetail.planId,
                 roleId: userDetail.roleId,
             }
-            // userDetail["changedProp"] = true
-            // userDetail["name"] = userDetail.firstName
-            // userDetail["password"] = userDetail.password ?? ""
-
-            console.log("user dtail => ", userDetailData)
             this.setState(userDetailData);
         }
     }
@@ -147,7 +138,6 @@ class AddEdit extends Component {
         }
         let AddEditButton = !this.props.addEditLoading ? "Save" : "Please Wait ..."
         let AddEditButtonClass = !this.props.addEditLoading ? "" : "disable"
-        // console.log("dfsdfsd",this.props.planList)
         return (
             <CCard>
                 <CCardHeader className='d-flex' component="h5">

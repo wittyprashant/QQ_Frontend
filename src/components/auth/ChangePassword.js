@@ -1,16 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-    CButton,
-    CCol,
-    CForm,
-    CFormInput,
-    CInputGroup,
-    CInputGroupText,
-    CRow,
-    CAlert,
-    CImage,
-    CFormFeedback,
+    CButton, CCol, CForm, CFormInput,
+    CInputGroup, CInputGroupText, CRow, CAlert, CImage, CFormFeedback,
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilLockLocked } from '@coreui/icons';
@@ -40,8 +32,6 @@ class ChangePassword extends Component {
     
         if (form.checkValidity() === true) {
             try {
-               // Debug log
-    
                 this.props.onchangepass( this.state.password, this.state.confirm_password)
                     .then((response) => {
                         if (response) {

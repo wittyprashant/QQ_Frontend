@@ -22,12 +22,10 @@ import {
 import DatePicker from "react-datepicker";
 import swal from 'sweetalert';
 import Moment from 'moment';
-
 import "react-datepicker/dist/react-datepicker.css";
 import { updateObject } from '../../store/Utility'
 import * as actions from '../../store/actions'
 import axios from '../../axios_call'
-
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 function withRouter(Component) {
@@ -65,7 +63,6 @@ class AddEdit extends Component {
         groupIcon: "",
         AddDocumentFile: [],
         categoryList: []
-
     };
 
     onFileChangeAddPhoto = (e) => {
@@ -87,7 +84,6 @@ class AddEdit extends Component {
         getBase64(file[0], this)
             .then(result => {
                 file["base64"] = result;
-                console.log("File Is File", file["base64"]);
                 this.setState({
                     AddDocumentFile: file.base64
                 });
@@ -102,7 +98,6 @@ class AddEdit extends Component {
         getBase64(file[0], this)
             .then(result => {
                 file["base64"] = result;
-                console.log("File Is Featued", file.base64);
                 this.setState({
                     AddFeaturedPhoto: file.base64
                 });
@@ -116,7 +111,6 @@ class AddEdit extends Component {
         getBase64(file[0], this)
             .then(result => {
                 file["base64"] = result;
-                console.log("File Is Document", file.base64);
                 this.setState({
                     AddDocumentFile: [file.base64]
                 });
@@ -135,7 +129,6 @@ class AddEdit extends Component {
             validated: true
         })
         if (form.checkValidity() === true) {
-            console.log("submit");
             let finalImageArray = [];
             if (this.state.AddDocumentFile.length > 0) {
                 finalImageArray = [this.state.AddDocumentFile]
@@ -152,7 +145,6 @@ class AddEdit extends Component {
                 "groupIcon": this.state.AddFeaturedPhoto,
                 "documentDescription": this.state.groupdescription
             }
-            console.log("FINAL PARAMS", params)
             this.props.onAddEditForm(params, "")
         }
     }
@@ -181,9 +173,8 @@ class AddEdit extends Component {
                     this.setState({
                         categoryList: response.data.result
                     });
-                    console.log("Success", response.data.result)
                 } else {
-                    console.log("Fail X")
+                    console.log("error")
                 }
             })
             .catch((error) => {
@@ -191,7 +182,6 @@ class AddEdit extends Component {
             })
 
         if (groupId) {
-            console.log("dddd")
             this.setState({
                 groupId: groupId
             })
@@ -211,9 +201,8 @@ class AddEdit extends Component {
                             image: response.data.result.image,
                             groupIcon: response.data.result.groupIcon,
                         });
-                        console.log("Success", response.data.result)
                     } else {
-                        console.log("Fail X")
+                        console.log("error")
                     }
                 })
                 .catch((error) => {
@@ -222,8 +211,6 @@ class AddEdit extends Component {
         }
 
     }
-
-
 
     render() {
         if (this.props.redirectTo) {
@@ -387,22 +374,13 @@ const getBase64 = (file, state) => {
     return new Promise(resolve => {
         let fileInfo;
         let baseURL = "";
-        // Make new FileReader
         let reader = new FileReader();
 
-        // Convert the file to base64 text
         reader.readAsDataURL(file);
-
-        // on reader load somthing...
         reader.onload = () => {
-            // Make a fileInfo Object
-            console.log("Called", reader);
             baseURL = reader.result;
-
-            console.log(baseURL.result);
             resolve(baseURL);
         };
-        console.log(fileInfo);
     });
 };
 
