@@ -277,7 +277,7 @@ h2.lgntxt {
 }
 img.eyeimge {
     /* position: absolute; */
-    margin-left: -40px;
+    left: -40px;
     z-index: 9;
     display: block;
     position: relative;
@@ -1263,4 +1263,14 @@ button.btn-batchpayment {
 }
 .row.btn-paymenttxt {
     gap: 50%;
+}
+@media (max-width: 1024px){
+    .row.btn-paymenttxt {
+        gap: 43%;
+    }
+}
+@media (max-width: 991px){
+    .row.btn-paymenttxt {
+        gap: 28%;
+    }
 }

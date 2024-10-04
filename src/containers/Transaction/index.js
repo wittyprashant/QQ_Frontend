@@ -46,6 +46,7 @@ import {
   cilCheckCircle,
   cilInfo,
   cilSend,
+  cilSearch,
 } from "@coreui/icons";
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import { faAngleRight, faCheck } from '@fortawesome/free-solid-svg-icons';
@@ -100,6 +101,7 @@ class Transaction extends Component {
       modalVisible: false,
       showDropdown: false,
       job: "",
+      selectedStatustrans: 'ALL',
       selectedButton: null,
       filterVisible: true,
       filterMarginLeft: "20px",
@@ -286,7 +288,7 @@ class Transaction extends Component {
       // order: 2,
       // page: 1,
     };
-
+    
     this.props.onTransactionList(filterParams);
     this.setState({ modalVisible: false });
     //this.toggleModal('filter');
@@ -329,7 +331,29 @@ class Transaction extends Component {
       filterMarginRight: filterVisible ? "3%" : "0%",
     }));
   };
-
+  filterTableData = (data, statusFilter, filterText) => {
+    if (!Array.isArray(data)) {
+      console.warn("Data is not an array:", data);
+      return []; // Return empty array if data is not an array
+    }
+  
+    // Filter by status first
+    let filteredData = statusFilter === "ALL" ? data : data.filter(row => row.Status === statusFilter);
+  
+    // Then filter by filterText
+    return filteredData.filter((item) => {
+      const BankTransactionID = item.BankTransactionID || ""; // Default to empty string if undefined
+      const status = item.Status || ""; // Default to empty string if undefined
+      
+      return (
+        BankTransactionID.toLowerCase().includes(filterText.toLowerCase()) ||
+        status.toLowerCase().includes(filterText.toLowerCase())
+      );
+    });
+  };
+  handleFilterTextChange = (event) => {
+    this.setState({ filterText: event.target.value });
+  };
   toggleModal = (id) => {
     this.setState((prevState) => ({
       modalVisible: prevState.modalVisible === id ? null : id, // Toggle the modal visibility
@@ -483,6 +507,8 @@ class Transaction extends Component {
       transactionType,
       selectedType,
       startDate,
+      filterText,
+      selectedStatustrans,
       endDate,
     } = this.state;
     const {
@@ -548,14 +574,11 @@ class Transaction extends Component {
             <CRow className="mb-3">
               <CCol sm={12}>
                 <CFormInput
-                  onChange={(e) => {
-                    let newFilterText = e.target.value;
-                    this.setState({ filterText: newFilterText });
-                    this.props.onTransactionFilterList(newFilterText); // This can be used to call an API or filter data in parent component
-                  }}
-                  className="inputsearch"
-                  value={this.state.filterText}
+                  onChange={this.handleFilterTextChange} // Update filterText when input changes
+                  value={filterText}  // Bind input value to filterText state
+                  icon={cilSearch}
                   size="sm"
+                  className="inputsearch"
                   placeholder="Search..."
                 />
               </CCol>
@@ -626,7 +649,7 @@ class Transaction extends Component {
         </CModal>
         <DataTable
           columns={this.state.columnTransaction}
-          data={filteredData}
+          data={this.filterTableData(filteredData, selectedStatustrans, filterText)}
           defaultSortFieldId={5}
           defaultSortAsc={false}
           progressPending={this.props.loading}

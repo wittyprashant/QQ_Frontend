@@ -312,19 +312,22 @@ handleButtonClick = (buttonName) => {
             <Tab eventKey="ALL" title="ALL">
               <CCard>
                 {/* <CCardBody className='text-bankacc'>Credit Cards AMEX</CCardBody> */}
-                <CCol>
-         <CRow className="btn-paymenttxt">
-            <CFormInput
-        onChange={this.handleFilterTextChange} // Update filterText when input changes
-          value={filterText}  // Bind input value to filterText state
-          icon={cilSearch}
-          size="sm"
-          className="searchinputform"  // Use className in JSX
-          placeholder="Search..."
-        />
-        <CButton class="btn-batchpayment">Create Batch Payment</CButton>
+           
+                <CRow className="d-flex align-items-center">
+          <CCol className="d-flex justify-content-between">
+          <CFormInput
+            onChange={this.handleFilterTextChange} // Update filterText when input changes
+            value={filterText}  // Bind input value to filterText state
+            icon={cilSearch}
+            size="sm"
+            className="searchinputform"  // Use className in JSX
+            placeholder="Search..."
+          />
+          <CButton className="btn-batchpayment ms-2">Create Batch Payment</CButton>
+        </CCol>
         </CRow>
-      </CCol>
+  
+     
                 <DataTable
                   columns={this.columns}
                   data={this.filterTableData(tableData, selectedStatus, filterText)}

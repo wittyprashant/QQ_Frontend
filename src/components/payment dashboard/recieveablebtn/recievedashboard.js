@@ -1,5 +1,5 @@
 import { useState, useEffect,Component } from "react";
-import { CFormInput, CCard, CCardBody, CCol, CTable, CTableRow, CTableHead, CTableDataCell, CTableHeaderCell, CTableBody } from "@coreui/react";
+import { CFormInput, CCard, CCardBody, CCol, CTable, CTableRow, CTableHead, CTableDataCell, CTableHeaderCell, CTableBody, CRow } from "@coreui/react";
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 import CIcon from '@coreui/icons-react';
@@ -194,39 +194,51 @@ class Recievables extends Component {
                     
                    <div  class="invoice-boxjan">
                          <div class="border-rightdate">
+                          <CRow>
                             <CCol class='text-Receipt'>
                            
                                <CCardBody class='text-await'>2 JAN 2023</CCardBody>
                                <CCard class='text-price'>$10,657</CCard>
                               
                             </CCol>
+                            </CRow>
                          </div>
                          
                          <div class="border-rightdate">
+                         <CRow>
                             <CCol class='text-Receipt'>
                                <CCardBody class='text-date'>9 JAN 2023</CCardBody>
                                <CCard class='text-dateprice'>$12,065</CCard>
                             </CCol>
+                            </CRow>
                          </div>
                          <div class="border-rightdate">
+                          <CRow>
                             <CCol class='text-Receipt'>
                                <CCardBody class='text-date'>16 JAN 2023</CCardBody>
                                <CCard class='text-dateprice'>$7,031</CCard>
                             </CCol>
+                            </CRow>
                          </div>
                          <div class="border-rightdate">
+                         <CRow>
                             <CCol class='text-Receipt'>
                                <CCardBody class='text-date'>23 JAN 2023</CCardBody>
                                <CCard class='text-dateprice'>$3,001</CCard>
                             </CCol>
+                            </CRow>
                          </div>
                          <div >
+                          <CRow>
                             <CCol class='text-Receipt'>
                                <CCardBody class='text-date'>30 JAN 2023</CCardBody>
                                <CCard class='text-dateprice'>$500</CCard>
                             </CCol>
+                            </CRow>
                          </div>
+                         
                       </div>
+                      
                       </div>
                      
                       </div>
@@ -235,7 +247,7 @@ class Recievables extends Component {
         <Tabs  defaultActiveKey="ALL" transition={false} id="noanim-tab-example" className="tab-text">
           <Tab eventKey="ALL" title="ALL">
             <CCard>
-            <CCol >
+            <CRow>
      
             <CFormInput
         onChange={this.handleFilterTextChange} // Update filterText when input changes
@@ -245,7 +257,7 @@ class Recievables extends Component {
           className="searchinputform"  // Use className in JSX
           placeholder="Search..."
         />
- </CCol>
+ </CRow>
  <DataTable
         columns={columns}
         data={this.filterTableData(tableData, selectedStatus, filterText)}  // Pass the filtered data to DataTable
